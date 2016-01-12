@@ -1,0 +1,8 @@
+run_erl [14576] Mon Jan  4 22:07:47 2016
+Args before exec of shell:
+run_erl [14576] Mon Jan  4 22:07:47 2016
+argv[0] = sh
+run_erl [14576] Mon Jan  4 22:07:47 2016
+argv[1] = -c
+run_erl [14576] Mon Jan  4 22:07:47 2016
+argv[2] = exec "/Users/syntaxfish/dev/project/private/hermes/apps/hermes_push/rel/hermes_push/bin/hermes_push" "console"
