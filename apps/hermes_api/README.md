@@ -17,3 +17,13 @@ Ready to run in production? Please [check our deployment guides](http://www.phoe
   * Docs: http://hexdocs.pm/phoenix
   * Mailing list: http://groups.google.com/group/phoenix-talk
   * Source: https://github.com/phoenixframework/phoenix
+
+
+## TODO list
+- [ ] local cache 추가
+- [ ] Producer route 개발
+- [ ] API 추가
+  - [ ] push 추가
+  - [ ] service 추가
+  - [ ] options 추가
+  - [ ] 유저 추가
