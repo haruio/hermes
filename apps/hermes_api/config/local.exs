@@ -41,3 +41,9 @@ config :hermes_api, HApi.Repo,
   database: "mks_hermes",
   hostname: "127.0.0.1",
   pool_size: 5
+
+  # config :hermes_api, Producer.PushProducer,
+  # adapter: Producer.Route.LocalPushRoute
+
+  config :hermes_api, Producer.PushProducer,
+  adapter: Producer.Route.GlobalPushRoute

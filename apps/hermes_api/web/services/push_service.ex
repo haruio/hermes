@@ -1,76 +1,76 @@
 defmodule HApi.PushService do
   alias HApi.Push
   alias HApi.Push.Query, as: PushQuery
-  alias HApi.Service.Query, as: ServiceQuery
   alias Util.KeyGenerator
-  alias Util.PushProducer
+  alias Producer.PushProducer
   alias Code.PushStatus
 
-  def send_push(service, param) do
+  def publish_push(:immediate, service, param) do
     # set service_id, push_id
     param = param
-    |> build_param(Map.get(service, "service_id"))
+    |> build_param(Map.get(service, :service_id))
 
     # save push
     push = via_push_model({:send_push, param})
     |> insert_push
 
-    # select service config
-    service = push
-    |> Map.get(:service_id)
-    |> ServiceQuery.select_one_by_service_id
-
     # publish to queue
-    build_message(push, service,  Map.get(param, "pushTokens", []))
-    |> PushProducer.publish
+    message = build_message(push, service,  Map.get(param, "pushTokens", []))
+    PushProducer.publish_immediate({:publish, message})
 
     # send response
     Map.take(param, ["pushId"])
   end
 
-  def reserve_push(service, param) do
+  def publish_push(:reserve, service, param) do
     # set service_id, push_id
     param = param
-    |> build_param(Map.get(service, "service_id"))
+    |> build_param(Map.get(service, :service_id))
     |> Map.put("pushStatus", PushStatus.cd_reserved)
 
     # save push
-    via_push_model({:reserve_push, param})
+    push = via_push_model({:reserve_push, param})
     |> insert_push
 
     # publish to scheduler
-    PushProducer.reserve(param)
+    message = build_reserve_message(param)
+    PushProducer.publish_reserve({:reserve, message})
 
     # send response
     Map.take(param, ["pushId"])
   end
 
-  def create_message(service, param) do
+  def create_message(:immediate, service, param) do
     # set service_id, push_id
     param = param
-    |> build_param(Map.get(service, "service_id"))
+    |> build_param(Map.get(service, :service_id))
 
     # save push
-    via_push_model({:reserve_push, param})
+    via_push_model({:create_message, param})
     |> insert_push
 
     # return push id
     Map.take(param, ["pushId"])
   end
 
-  def create_reserve_message(service, param) do
+  def create_message(:reserve, service, param) do
     # set service_id, push_id
     param = param
-    |> build_param(Map.get(service, "service_id"))
+    |> build_param(Map.get(service, :service_id))
     |> Map.put("pushStatus", PushStatus.cd_reserved)
 
     # save push
-    via_push_model({:reserve_push, param})
+    via_push_model({:create_reserve_message, param})
     |> insert_push
+
+    # publish to scheduler
+    message = build_reserve_message(param)
+    PushProducer.publish_reserve({:reserve, message})
 
     # return push id
     Map.take(param, ["pushId"])
   end
+
 
   def send_token(service, param) do
     # get push message
@@ -78,25 +78,34 @@ defmodule HApi.PushService do
     |> Map.get("pushId")
     |> PushQuery.select_one_by_push_id
 
-    # select service config
-    service = push
-    |> Map.get(:service_id)
-    |> ServiceQuery.select_one_by_service_id
+    cond do
+      Map.get(push, :push_status) == PushStatus.cd_reserved ->
+        send_token(:reserve, service, param, push)
+      true ->
+        send_token(:immediate, service, param, push)
+    end
+  end
 
-    # publish push or scheduler
-    result = case Map.get(push, "push_status") do
-               "RVED" ->
-                 Map.get(push, :service_id)
-                 PushProducer.reserve_add_token
-               nil ->
-                 {:error, "Invalid push id"}
-               _ ->
-                 build_message(push, service, Map.get(param, :pushTokens, []))
-                 |> PushProducer.publish(push)
-             end
+  def send_token(:immediate, service, param, push) do
+    # publish push
+    message = build_message(push, service,  Map.get(param, "pushTokens", []))
+
+    # publish message
+    PushProducer.publish_immediate({:publish, message})
 
     # retun push id
-    %{"method" => "send_toekn"}
+    Map.take(param, ["pushId"])
+  end
+
+  def send_token(:reserve, service, param, push) do
+    # build message
+    message = build_reserve_message(param)
+
+    # publish message
+    PushProducer.publish_reserve({:reserve, message})
+
+    # return push id
+    Map.take(param, ["pushId"])
   end
 
   ## Private method
@@ -108,9 +117,18 @@ defmodule HApi.PushService do
 
   defp build_message(push_model, service_model, tokens) do
     push_model
-    |> Map.take([:push_id, :service_id, :title, :body])
-    |> Map.put(:pushTokens, tokens)
+    |> Map.take([:push_id, :service_id, :title, :body, :publish_time])
+    |> Map.put(:push_tokens, tokens)
     |> Map.merge(Map.take(service_model, [:gcm_api_key, :apns_key, :apns_cert]))
+  end
+
+  defp build_reserve_message(param) when is_map(param), do: build_reserve_message(Map.get(param, "pushId"), Map.get(param, "pushTokens"))
+  defp build_reserve_message(%HApi.Push{push_id: push_id}, tokens), do: build_reserve_message(push_id, tokens)
+  defp build_reserve_message(push_id, tokens \\ :empty) when is_binary(push_id) do
+    case tokens do
+      :empty -> %{push_id: push_id}
+      _ -> %{push_id: push_id, push_tokens: tokens}
+    end
   end
 
   defp insert_push(model) do
@@ -126,6 +144,7 @@ defmodule HApi.PushService do
 
   defp via_push_model({:reserve_push, param}), do: via_push_model({:send_push, param})
   defp via_push_model({:create_message, param}), do: via_push_model({:send_push, param})
+  defp via_push_model({:create_reserve_message, param}), do: via_push_model({:send_push, param})
   defp via_push_model({:send_push, param}) do
     %{
       "service_id" => Map.get(param, "serviceId"),

@@ -46,8 +46,20 @@ defmodule HApi.Service.Query do
     |> Repo.one
   end
 
+  def select_one_by_rest_token([rest_token]), do: select_one_by_rest_token(rest_token)
+  def select_one_by_rest_token(rest_token) do
+    rest_token
+    |> by_rest_token
+    |> Repo.one
+  end
+
   def by_service_id(service_id) do
     from s in HApi.Service,
     where: s.service_id == ^service_id
+  end
+
+  def by_rest_token(rest_token) do
+    from s in HApi.Service,
+    where: s.rest_token == ^rest_token
   end
 end

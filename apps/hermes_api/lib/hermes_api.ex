@@ -13,7 +13,7 @@ defmodule HApi do
       supervisor(HApi.Repo, []),
       # Here you could define other workers and supervisors as children
       # worker(HApi.Worker, [arg1, arg2, arg3]),
-      worker(Util.PushProducer, []) # TODO change to poolboy
+      worker(Producer.PushProducer, []) # TODO change to poolboy
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
