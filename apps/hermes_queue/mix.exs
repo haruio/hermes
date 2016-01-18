@@ -34,6 +34,9 @@ defmodule HQueue.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [
+      {:poolboy, "~> 1.5"},
+      {:exactor, "~> 2.2"}
+    ]
   end
 end

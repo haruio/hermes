@@ -9,6 +9,8 @@ defmodule HQueue do
     children = [
       # Define workers and child supervisors to be supervised
       # worker(HQueue.Worker, [arg1, arg2, arg3]),
+      supervisor(HQueue.ExchangeSup, []),
+      supervisor(HQueue.QueueRootSup, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
