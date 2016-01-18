@@ -1,12 +1,14 @@
-defmodule HQueue.Mixfile do
+defmodule HScheduler.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :hermes_queue,
+    [app: :hermes_scheduler,
      version: "0.0.1",
+     build_path: "../../_build",
+     config_path: "../../config/config.exs",
      deps_path: "../../deps",
      lockfile: "../../mix.lock",
-     elixir: "~> 1.1",
+     elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps]
@@ -17,7 +19,7 @@ defmodule HQueue.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     [applications: [:logger],
-     mod: {HQueue, []}]
+     mod: {HScheduler, []}]
   end
 
   # Dependencies can be Hex packages:
@@ -34,9 +36,6 @@ defmodule HQueue.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [
-      {:poolboy, "~> 1.5"},
-      {:exactor, "~> 2.2"}
-    ]
+    []
   end
 end
