@@ -7,13 +7,10 @@ defmodule HApi do
     import Supervisor.Spec, warn: false
 
     children = [
-      # Start the endpoint when the application starts
       supervisor(HApi.Endpoint, []),
-      # Start the Ecto repository
       supervisor(HApi.Repo, []),
-      # Here you could define other workers and supervisors as children
-      # worker(HApi.Worker, [arg1, arg2, arg3]),
-      worker(Producer.PushProducer, []) # TODO change to poolboy
+      supervisor(Producer.ProducerSup, [])
+      # worker(Producer.PushProducer, []) # TODO change to poolboy
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
