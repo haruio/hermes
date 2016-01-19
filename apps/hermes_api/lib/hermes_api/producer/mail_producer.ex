@@ -1,7 +1,7 @@
 defmodule Producer.MailProducer do
-  use ExActor.GenServer, export: __MODULE__
+  use ExActor.GenServer
 
-  defstart start_link , do: initial_state(0)
+  defstart start_link(args \\ []), do: initial_state(args)
 
   defcast publish(message) do
     noreply

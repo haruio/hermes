@@ -1,7 +1,7 @@
 defmodule Producer.PushProducer do
-  use ExActor.GenServer, export: __MODULE__
+  use ExActor.GenServer
 
-  defstart start_link, do: initial_state(Application.get_env(:hermes_api, __MODULE__))
+  defstart start_link(args \\ []), do: initial_state(Application.get_env(:hermes_api, __MODULE__))
 
   defcast publish_immediate(message), state: state do
     route = state[:adapter]
