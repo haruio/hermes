@@ -43,7 +43,7 @@ config :hermes_api, HApi.Repo,
   pool_size: 5
 
   config :hermes_api, Producer.PushProducer,
-  adapter: Producer.Route.LocalPushRoute
+  adapter: Producer.Router.LocalPushRouter
 
   # config :hermes_api, Producer.PushProducer,
-  # adapter: Producer.Route.GlobalPushRoute
+  # adapter: Producer.Router.GlobalPushRouter

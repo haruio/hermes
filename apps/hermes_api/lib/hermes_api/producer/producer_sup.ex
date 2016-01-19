@@ -21,6 +21,7 @@ defmodule Producer.ProducerSup do
     [
       {:name, {:local, PushProducer}},
       {:worker_module, PushProducer},
+      {:strategy, :fifo},
       {:size, 10},
       {:max_overflow, 100}
     ]
