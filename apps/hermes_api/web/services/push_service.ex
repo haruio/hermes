@@ -16,7 +16,7 @@ defmodule HApi.PushService do
 
     # publish to queue
     message = build_message(push, service,  Map.get(param, "pushTokens", []))
-    PushProducer.publish_immediate({:publish, message})
+    PushProducer.publish_immediate(message)
 
     # send response
     Map.take(param, ["pushId"])
@@ -91,7 +91,7 @@ defmodule HApi.PushService do
     message = build_message(push, service,  Map.get(param, "pushTokens", []))
 
     # publish message
-    PushProducer.publish_immediate({:publish, message})
+    PushProducer.publish_immediate(message)
 
     # retun push id
     Map.take(param, ["pushId"])
@@ -117,8 +117,9 @@ defmodule HApi.PushService do
 
   defp build_message(push_model, service_model, tokens) do
     push_model
-    |> Map.take([:push_id, :service_id, :title, :body, :publish_time])
+    |> Map.take([:push_id, :service_id, :title, :body, :publish_time, :extra])
     |> Map.put(:push_tokens, tokens)
+    |> Map.put(:apns_env, :dev) ## TODO apns_options
     |> Map.merge(Map.take(service_model, [:gcm_api_key, :apns_key, :apns_cert]))
   end
 
