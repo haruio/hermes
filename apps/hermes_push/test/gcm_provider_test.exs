@@ -32,7 +32,7 @@ defmodule GCMProviderTest do
      "pushType" => "GCM", "uuid" => "999"}], service_id: "0J-6W4i-0O6i-T",
   title: "title"}
 
-  	{:ok, message}
+    {:ok, message}
   end
 
   test "start gcm provider" do
@@ -73,7 +73,6 @@ defmodule GCMProviderTest do
   end
 
   test "gcm provider sup", message do
-    {:ok, pid} = GCMProviderSup.start_link
     g_message = Map.drop(message, [:apns_cert, :apns_key, :apns_dev, :push_tokens])
     g_tokens = Map.get(message, :push_tokens)
     |> Enum.filter(fn(token) -> Map.get(token, "pushType") == "GCM" end)

@@ -18,8 +18,8 @@ defmodule HPush.Provider.GCMProvider do
   end
 
   def publish(message, tokens) do
-    :poolboy.transaction(__MODULE__, fn(provider) ->
-      GenServer.cast(provider, {:publish, message, tokens})
+    :poolboy.transaction(pool_name, fn(provider) ->
+      GenServer.cast(pool_name, {:publish, message, tokens})
     end)
   end
 
@@ -41,4 +41,6 @@ defmodule HPush.Provider.GCMProvider do
     |> Map.put("pushId", push_id)
     |> Map.put("feedback", feedback)
   end
+
+  def pool_name , do: GCMProviderPool
 end
