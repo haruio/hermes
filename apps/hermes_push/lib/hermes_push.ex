@@ -9,6 +9,7 @@ defmodule HPush do
     children = [
       # Define workers and child supervisors to be supervised
       # worker(HPush.Worker, [arg1, arg2, arg3]),
+      supervisor(HPush.Provider.ProviderSup, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

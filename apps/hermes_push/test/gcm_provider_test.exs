@@ -2,6 +2,7 @@ defmodule GCMProviderTest do
   use ExUnit.Case
 
   alias HPush.Provider.GCMProvider
+  alias HPush.Provider.GCMProviderSup
 
   setup do
   	message = %{apns_cert: "Bag Attributes\n    friendlyName: Apple Development IOS Push Services: com.makeus.dingo\n    localKeyID: C7 0A 3E C3 C4 26 31 7F 74 E2 7D FC 5D 0C 44 52 D4 21 45 38 \nsubject=/UID=com.makeus.dingo/CN=Apple Development IOS Push Services: com.makeus.dingo/OU=VNM6WKNG6W/C=US\nissuer=/C=US/O=Apple Inc./OU=Apple Worldwide Developer Relations/CN=Apple Worldwide Developer Relations Certification Authority\n-----BEGIN CERTIFICATE-----\nMIIFhTCCBG2gAwIBAgIIPmr6sFuc2xQwDQYJKoZIhvcNAQEFBQAwgZYxCzAJBgNV\nBAYTAlVTMRMwEQYDVQQKDApBcHBsZSBJbmMuMSwwKgYDVQQLDCNBcHBsZSBXb3Js\nZHdpZGUgRGV2ZWxvcGVyIFJlbGF0aW9uczFEMEIGA1UEAww7QXBwbGUgV29ybGR3\naWRlIERldmVsb3BlciBSZWxhdGlvbnMgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkw\nHhcNMTUxMTMwMDUxNzMxWhcNMTYxMTI5MDUxNzMxWjCBhDEgMB4GCgmSJomT8ixk\nAQEMEGNvbS5tYWtldXMuZGluZ28xPjA8BgNVBAMMNUFwcGxlIERldmVsb3BtZW50\nIElPUyBQdXNoIFNlcnZpY2VzOiBjb20ubWFrZXVzLmRpbmdvMRMwEQYDVQQLDApW\nTk02V0tORzZXMQswCQYDVQQGEwJVUzCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC\nAQoCggEBAMCBOmrr4tpJzjYC5qquRuPgtEexkjqFS/WafLbXcGf+lUzRILq8AGQm\n0HUD/eaBYm7XCwhW2JcK6R95de4T2TCaefPhWudeEpmldg2LXU/uJWNGiYhN38Uo\nbKvdZVdSnv/XPHofHm1xWlnWT0yWoIzYQySbzb7MRS08QsAyL/9/EhfrQxpq3uFf\nfR6J+KO3UvX3jxNpyvMO2iBchN9ebQbhCw+RQdfDEvOAZDlxcdXoy4hwvC3vEYM8\n811sGMN1ImSYP+i/NWA1hL4TdN54xMwNO/oXSXhBit6FkNiacKRYyf3bQpxMtOA1\nmVZ4bK6M+yxh0kcIlrNuAhty9P2NlYUCAwEAAaOCAeUwggHhMB0GA1UdDgQWBBTH\nCj7DxCYxf3TiffxdDERS1CFFODAJBgNVHRMEAjAAMB8GA1UdIwQYMBaAFIgnFwmp\nthhgi+zruvZHWcVSVKO3MIIBDwYDVR0gBIIBBjCCAQIwgf8GCSqGSIb3Y2QFATCB\n8TCBwwYIKwYBBQUHAgIwgbYMgbNSZWxpYW5jZSBvbiB0aGlzIGNlcnRpZmljYXRl\nIGJ5IGFueSBwYXJ0eSBhc3N1bWVzIGFjY2VwdGFuY2Ugb2YgdGhlIHRoZW4gYXBw\nbGljYWJsZSBzdGFuZGFyZCB0ZXJtcyBhbmQgY29uZGl0aW9ucyBvZiB1c2UsIGNl\ncnRpZmljYXRlIHBvbGljeSBhbmQgY2VydGlmaWNhdGlvbiBwcmFjdGljZSBzdGF0\nZW1lbnRzLjApBggrBgEFBQcCARYdaHR0cDovL3d3dy5hcHBsZS5jb20vYXBwbGVj\nYS8wTQYDVR0fBEYwRDBCoECgPoY8aHR0cDovL2RldmVsb3Blci5hcHBsZS5jb20v\nY2VydGlmaWNhdGlvbmF1dGhvcml0eS93d2RyY2EuY3JsMAsGA1UdDwQEAwIHgDAT\nBgNVHSUEDDAKBggrBgEFBQcDAjAQBgoqhkiG92NkBgMBBAIFADANBgkqhkiG9w0B\nAQUFAAOCAQEAuDFiBO1y4mnpZm66GoBeTMNw1makqE+Dk4Ob9KEJXC982/lnlqrf\n/Saha02O1Mn8gPB+sBfFfTYKH6muxEMbkfEL1RL0imqknaFCeLTnwKdGed7nMd0J\nL1sw40zmTG7KCZNNzRB7LB8PDPbdRZLfN3DqRm0RgRHpohG2CEtn/sxxblR9SXgV\nTTCxujKo2dEzMC6UesdlOmXGxglsocVOBpxdzMOiwTHQvyt7DOboaR840TekA4CK\nBMG4vdp1agMI73RYakIqCQCeOYXrBMqdUggeOK6T6V03WZrIZWtdHd3zX4FL53ZV\nxmPPqLcvcHf5PDqp8K6wL9luZPt3Z9PUxg==\n-----END CERTIFICATE-----\n",
@@ -69,5 +70,15 @@ defmodule GCMProviderTest do
     |> Enum.map(fn(token) -> Map.get(token, "pushToken") end)
 
     assert = GCMProvider.publish(pid, g_message, g_tokens) == :ok
+  end
+
+  test "gcm provider sup", message do
+    {:ok, pid} = GCMProviderSup.start_link
+    g_message = Map.drop(message, [:apns_cert, :apns_key, :apns_dev, :push_tokens])
+    g_tokens = Map.get(message, :push_tokens)
+    |> Enum.filter(fn(token) -> Map.get(token, "pushType") == "GCM" end)
+    |> Enum.map(fn(token) -> Map.get(token, "pushToken") end)
+
+    assert = GCMProvider.publish(g_message, g_tokens) == :ok
   end
 end
