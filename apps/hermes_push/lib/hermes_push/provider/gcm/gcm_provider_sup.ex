@@ -3,7 +3,7 @@ defmodule HPush.Provider.GCMProviderSup do
 
   alias HPush.Provider.GCMProvider
 
-  def start_link(args \\ []), do: Supervisor.start_link(__MODULE__, args)
+  def start_link(args \\ []), do: Supervisor.start_link(__MODULE__, args, [name: __MODULE__])
 
   def init(args) do
     gcm_provider_opts = Application.get_env(:hermes_push, GCMProvider)
@@ -16,7 +16,7 @@ defmodule HPush.Provider.GCMProviderSup do
 
   defp pool_config do
     [
-      {:name, {:local, GCMProvider}},
+      {:name, {:local, GCMProvider.pool_name}},
       {:worker_module, GCMProvider},
       {:size, 10},
       {:max_overflow, 1000}

@@ -3,23 +3,21 @@ defmodule HPush.Provider.GCMProvider do
 
   @default_feedback "http://52.76.122.168:9090"
 
-  defstart start_link(args \\ %{}), do: initial_state(args)
+  def pool_name , do: GCMProviderPool
 
+  defstart start_link(args \\ %{}), do: initial_state(args)
   defcast publish(message, tokens), state: state do
     gcm_key = Map.get(message, :gcm_api_key)
-    {:ok, _gcm_res} = GCM.push(gcm_key, tokens, build_payload(message))
+    {:ok, gcm_res} = GCM.push(gcm_key, tokens, build_payload(message))
 
     ## TODO send feedback
-    # case Poison.Parser.parse(gcm_res) do
-    #   {:ok, parsed_res} ->
-    #   {:error, _} ->
-    # end
+    ## TODO insert push log
     noreply
   end
 
   def publish(message, tokens) do
-    :poolboy.transaction(__MODULE__, fn(provider) ->
-      GenServer.cast(provider, {:publish, message, tokens})
+    :poolboy.transaction(pool_name, fn(provider) ->
+      GenServer.cast(pool_name, {:publish, message, tokens})
     end)
   end
 
