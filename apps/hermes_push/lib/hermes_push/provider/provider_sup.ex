@@ -5,6 +5,7 @@ defmodule HPush.Provider.ProviderSup do
   def init(args) do
     children =[
       supervisor(HPush.Provider.GCMProviderSup, []),
+      supervisor(HPush.Provider.APNSProviderSup, [])
     ]
 
     supervise(children, strategy: :one_for_one)
