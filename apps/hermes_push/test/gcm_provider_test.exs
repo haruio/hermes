@@ -70,6 +70,7 @@ defmodule GCMProviderTest do
     |> Enum.map(fn(token) -> Map.get(token, "pushToken") end)
 
     assert = GCMProvider.publish(pid, g_message, g_tokens) == :ok
+    :timer.sleep 1000
   end
 
   test "gcm provider sup", message do
