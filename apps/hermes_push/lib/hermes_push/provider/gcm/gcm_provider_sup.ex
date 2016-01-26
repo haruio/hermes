@@ -19,7 +19,8 @@ defmodule HPush.Provider.GCMProviderSup do
       {:name, {:local, GCMProvider.pool_name}},
       {:worker_module, GCMProvider},
       {:size, 10},
-      {:max_overflow, 1000}
+      {:max_overflow, 1000},
+      {:strategy, :fifo}
     ]
   end
 end

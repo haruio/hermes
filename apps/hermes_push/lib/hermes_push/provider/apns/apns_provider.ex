@@ -1,13 +1,14 @@
 defmodule HPush.Provider.APNSProvider do
   use ExActor.GenServer
 
-  alias HPush.Provider.APNSConnectionRepository, as: ConnRepo
-
   @default_feedback "http://52.76.122.168:9090"
+
+  alias HPush.Provider.APNSConnectionRepository, as: ConnRepo
 
   def pool_name, do: APNSProviderPool
 
   defstart start_link(args \\ %{}), do: initial_state(args)
+  def publish(message, tokens), do: :poolboy.transaction(pool_name, &(GenServer.cast(&1, {:publish, message, tokens})))
   defcast publish(message, tokens), state: state do
     {:ok, pool_name} = ConnRepo.get_repository(message)
 
