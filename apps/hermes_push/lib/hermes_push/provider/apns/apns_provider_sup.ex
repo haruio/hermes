@@ -20,7 +20,8 @@ defmodule HPush.Provider.APNSProviderSup do
       {:name, {:local, APNSProvider.pool_name}},
       {:worker_module, APNSProvider},
       {:size, 10},
-      {:max_overflow, 1000}
+      {:max_overflow, 1000},
+      {:strategy, :fifo}
     ]
   end
 end
