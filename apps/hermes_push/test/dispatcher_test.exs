@@ -1,8 +1,8 @@
-defmodule APNSProviderTest do
+defmodule DispatcherTest do
   use ExUnit.Case
 
-  alias HPush.Provider.APNSProvider
-  alias HPush.Provider.APNSConnectionRepository, as: ConnRepo
+  alias HPush.DispatcherSup
+  alias HPush.Dispatcher
 
   setup do
     message = %{
@@ -73,7 +73,7 @@ J4V+GbvbrBz/5xVIReA6F3X1+KL3vJ3IcuqAiqUb9uz8fhrRhbE=
       gcm_api_key: "AIzaSyBblgLAZHvvhM6gk3ZWcl7-mYQiuStsB40",
       push_id: "0J-6W4i-0O6i-T-3J-Wybm-6ETm-ewzmg",
       push_tokens: [
-        %{## 내꺼
+        %{
           "pushToken" => "9aaf5cfb62e4d8d60bd6d51183efbd3893fb38631690c654e75b9955dc67ad01",
           "pushType" => "APN"
          },
@@ -93,6 +93,24 @@ J4V+GbvbrBz/5xVIReA6F3X1+KL3vJ3IcuqAiqUb9uz8fhrRhbE=
         #   "pushToken" => "d5a6f5f208306ca362c0c44b33916f2f74e5986e4b729eaa1ff2abdb52c9d90b",
         #   "pushType" => "APN"
         # },
+%{"pushToken" => "fvEcs23J-wY:APA91bHvo_D8sd1K69o6VqsTJZniZEeCQA3RyD55E94VUWZYF3_txAv55R9DLfLYOH6GHk1A23BIKXBzWnOmPdH3eOEN0ZHE5NnErjejgUMCk2SWKuwfd017hO4ceMVCk8UuV3nfsPW5",
+     "pushType" => "GCM", "uuid" => "-111"},
+   %{"pushToken" => "d3F5NrIwwyI:APA91bEMwqGpCgooxZ1I2esXE3GZS2-sb0mZFZmHtM6CYRo_-iyJBHEJ_E_wKIkyMWH16xwdIVwXam-bKbclTdRr2VXDE2DxdKnurq4NfRJB4DEuIc_ElD2yQlsAUHPQRheJN8oB-c2i",
+     "pushType" => "GCM", "uuid" => "-555"},
+   %{"pushToken" => "eL6XbcQls9Q:APA91bFXbB8XzkurZoan-3rgTRVTmVcokHERDGAc2NY8mY9vIe42X2e-dHT3h_tGWIaJy6u2dn8_ivN4PVPNe4hrrvT1l0q280K733FbpLGLFIlGK-sgTI4HVE8BYZbEj_ivDBm7jtUN",
+     "pushType" => "GCM", "uuid" => "222"},
+   %{"pushToken" => "fmXspIOYsb4:APA91bHT6ArzquPjnnqZqeEMNBhx6ag99wjc9uuY9GQczLnqKmlMHY6aE02sAitMD8zapVmFH5I8nEohINGetVGhm8DwjwCr3oxch-D05YkQB9QduG66vNIGIJcudncM_RHGQ5bQB-3J",
+     "pushType" => "GCM", "uuid" => "333"},
+   %{"pushToken" => "d9WIdagzpSw:APA91bEwYTjyP9mF1vvOxpxb9U3I8Z2EN96JWjHt2y-Y7M_UWe89DCqjs1GI0e1MKfQSBWatxq5cjsHA61RJ4wuaDw7H3-1WlpOJTGgHvroq1-w8uEvCMHD1bht-vyMKUgCrfQz-6Y1R",
+     "pushType" => "GCM", "uuid" => "444"},
+   %{"pushToken" => "cGlc-q-5-kc:APA91bFd895NtCEQdx1Rjl5MIuyMhXJ1A1V1V595h1LzqEqqrIEaEfwN2oGtnrAuZujznxftK4XHWzWCv4F9BNOKkFOQEJsDL3x0dIN6Qaa39uRP31ekxmqwZaRC8A-humaeostlqqg7",
+     "pushType" => "GCM", "uuid" => "666"},
+   %{"pushToken" => "chbkAp-6dl8:APA91bFQpmEZO8BaQKHGbsqWVA2Zp0lU5HUqDcFCCW0_lBB6nP-js4lzmmdJQQucINdVn5r4ZjtKsUK2kbdVk7wHaMEJ6AqlSH-W2vTOerouZipqDSKkhX-jNd1J4SRvZotnOjOo4kGq",
+     "pushType" => "GCM", "uuid" => "777"},
+   %{"pushToken" => "fDWPOyUxBvs:APA91bFJM6ibE5-DqH79Pd0PlzMb9X-QAVspTi32Qva50tjvlZMD9NEcF7UEl0F5Ti6Qq1JQ1fPoRVuJlAQxHNUO2HA2Cp7UV_KAVomlN7LipFsemsvpbBZh2M8ecTe1CGItv1kHev0L",
+     "pushType" => "GCM", "uuid" => "888"},
+   %{"pushToken" => "eL6XbcQls9Q:APA91bFXbB8XzkurZoan-3rgTRVTmVcokHERDGAc2NY8mY9vIe42X2e-dHT3h_tGWIaJy6u2dn8_ivN4PVPNe4hrrvT1l0q280K733FbpLGLFIlGK-sgTI4HVE8BYZbEj_ivDBm7jtUN",
+     "pushType" => "GCM", "uuid" => "999"}
   ],
   service_id: "0J-6W4i-0O6i-T",
   title: "title"}
@@ -100,35 +118,19 @@ J4V+GbvbrBz/5xVIReA6F3X1+KL3vJ3IcuqAiqUb9uz8fhrRhbE=
     {:ok, message}
   end
 
-  test "test", message do
-    ConnRepo.start_link
-    {:ok, pid} = APNSProvider.start_link
-    g_message = Map.drop(message, [:gcm_api_key, :push_tokens])
-    |> Map.put(:body, "direct publish test")
 
-    g_tokens = Map.get(message, :push_tokens)
-    |> Enum.filter(fn(token) -> Map.get(token, "pushType") == "APN" end)
-    |> Enum.map(fn(token) -> Map.get(token, "pushToken") end)
+  test "start dispatcher pool" do
+    {:ok, pid} = DispatcherSup.start_link
 
-    APNSProvider.publish(pid, g_message, g_tokens)
-    :timer.sleep 1000
+    assert is_pid(pid)
+  end
+
+  test "dispatch job", message do
+    {:ok, pid} = DispatcherSup.start_link
+
+    Dispatcher.dispatch(message)
+    :timer.sleep 5000
 
     assert 1 == 1
   end
-
-
-  test "publish apns provider pool", message do
-    a_message = Map.drop(message, [:gcm_api_key, :push_tokens])
-    |> Map.put(:body, "provider pool test")
-
-    a_tokens = Map.get(message, :push_tokens)
-    |> Enum.filter(fn(token) -> Map.get(token, "pushType") == "APN" end)
-    |> Enum.map(fn(token) -> Map.get(token, "pushToken") end)
-
-    APNSProvider.publish(a_message, a_tokens)
-    :timer.sleep 1000
-
-    assert 1 == 1
-  end
-  
 end
