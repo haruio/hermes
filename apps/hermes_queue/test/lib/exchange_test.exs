@@ -36,26 +36,28 @@ defmodule ExchangeTest do
 
     Exchange.publish(exchange, "test message", "test.queue.topic2")
 
-    :timer.sleep 100
 
-    assert {:ok, "test message"} == Queue.consume(queue2)
-    assert {:ok, "test message"} == Queue.consume(queue3)
-    assert {:ok, "test message"} == Queue.consume(queue4)
-    assert :empty == Queue.consume(queue2)
-    assert :empty == Queue.consume(queue3)
-    assert :empty == Queue.consume(queue4)
+    {_id, message} = Queue.consume(queue2)
+    assert message == "test message"
+
+    {_id, message} = Queue.consume(queue3)
+    assert message == "test message"
+
+    {_id, message} = Queue.consume(queue4)
+    assert message == "test message"
   end
 
-  test "publish message consume" do
-    {:ok, exchange} = Exchange.new
-    {:ok, queue} = Queue.declare("test.consume.data")
-    Exchange.bind(exchange, queue)
+  test "publish and ack" do
+    {:ok, ex} = Exchange.new
+    {:ok, queue} = Queue.declare("test.queue.data")
+    Exchange.bind(ex, queue, "test.queue.topic")
 
-    Exchange.publish(exchange, "test consume message")
-
-    :timer.sleep 100
-
-    Queue.consume(queue, self)
-    assert_receive {:ok, "test consume message"}
+    Exchange.publish(ex, "test message", "test.queue.topic")
+    IO.inspect Queue.status(queue)
+    {msg_id, msg} = Queue.consume(queue)
+    IO.inspect msg
+    IO.inspect Queue.status(queue)
+    Queue.ack(queue, msg_id)
+    IO.inspect Queue.status(queue)
   end
 end
