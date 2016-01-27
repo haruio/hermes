@@ -29,7 +29,8 @@ defmodule HPush.Mixfile do
       {:mariaex, "~> 0.6.2"},
       {:exrm, "~> 1.0.0-rc7" },
       {:conform, "~> 1.0.0-rc8"},
-      {:conform_exrm, "~> 0.2.0"}
+      {:conform_exrm, "~> 0.2.0"},
+      {:hermes_queue, in_umbrella: true}
     ]
   end
 end
