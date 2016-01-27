@@ -27,6 +27,10 @@ defmodule HQueue.Queue do
     GenServer.call(pid, :status)
   end
 
+  def status_detail(pid) do
+    GenServer.call(pid, :status_detail)
+  end
+
   def ack(pid, message_id) do
     GenServer.cast(pid, {:ack, message_id})
   end
@@ -60,8 +64,12 @@ defmodule HQueue.Queue do
     {:reply, status, state}
   end
 
+  def handle_call(:status_detail, _from, state) do
+    {:reply, state, state}
+  end
+
   def handle_cast({:ack, message_id}, %QueueState{ unacked: unacked } = state) do
-    {:noreply,  Map.delete(state, message_id)}
+    {:noreply,  %{state | unacked: Map.delete(state.unacked, message_id)}}
   end
 
   ## Private API

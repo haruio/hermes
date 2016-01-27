@@ -154,8 +154,8 @@ defmodule HApi.PushService do
       "push_status" => Map.get(param, "pushStatus", PushStatus.cd_approved),
       "publish_start_dt" => Map.get(param, "publishStartDt"),
       "publish_end_dt" => Map.get(param, "publishEndDt"),
-      "body" => Map.get(param, "message") |> Map.get(param, "body"),
-      "title" => Map.get(param, "message") |> Map.get(param, "title"),
+      "body" => Map.get(param, "message") |> Map.get("body"),
+      "title" => Map.get(param, "message") |> Map.get("title"),
       "extra" => Map.get(param, "extra") |> Poison.encode!,
       "create_user" => Map.get(param, "createUser", 1),
       "update_user" => Map.get(param, "updateUser", 1)
