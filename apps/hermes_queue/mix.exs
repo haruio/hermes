@@ -36,7 +36,8 @@ defmodule HQueue.Mixfile do
   defp deps do
     [
       {:poolboy, "~> 1.5"},
-      {:exactor, "~> 2.2"}
+      {:exactor, "~> 2.2"},
+      {:uuid, "~> 1.1"}
     ]
   end
 end
