@@ -21,7 +21,7 @@ defmodule HApi.Push do
   end
 
   @required_fields ~w(push_id body title push_condition extra service_id push_status )
-  @optional_fields ~w(create_user update_user publish_dt)
+  @optional_fields ~w(create_user update_user publish_dt create_dt update_dt)
 
 
   @doc """
@@ -39,6 +39,7 @@ end
 defmodule HApi.Push.Query do
   import Ecto.Query
   alias HApi.Repo
+  alias Code.PushStatus
 
   def insert(changeset) do
     case Repo.insert(changeset) do
@@ -47,6 +48,11 @@ defmodule HApi.Push.Query do
     end
   end
 
+  def update(changeset) do
+    Repo.update(changeset)
+  end
+
+  def select_one_by_push_id(nil), do: nil
   def select_one_by_push_id([push_id]), do: select_one_by_push_id(push_id)
   def select_one_by_push_id(push_id) do
     push_id

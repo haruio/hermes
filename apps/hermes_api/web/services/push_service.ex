@@ -147,18 +147,25 @@ defmodule HApi.PushService do
   defp via_push_model({:create_message, param}), do: via_push_model({:send_push, param})
   defp via_push_model({:create_reserve_message, param}), do: via_push_model({:send_push, param})
   defp via_push_model({:send_push, param}) do
+    now = Ecto.DateTime.utc
     %{
       "service_id" => Map.get(param, "serviceId"),
       "push_id" => Map.get(param, "pushId"),
       "push_condition" => Map.get(param, "condition", %{}) |> Poison.encode!,
       "push_status" => Map.get(param, "pushStatus", PushStatus.cd_approved),
+      "publish_dt" => Map.get(param, "publishTime", now) |> timestamp_to_ecto_datetime,
       "publish_start_dt" => Map.get(param, "publishStartDt"),
       "publish_end_dt" => Map.get(param, "publishEndDt"),
       "body" => Map.get(param, "message") |> Map.get("body"),
       "title" => Map.get(param, "message") |> Map.get("title"),
       "extra" => Map.get(param, "extra") |> Poison.encode!,
       "create_user" => Map.get(param, "createUser", 1),
-      "update_user" => Map.get(param, "updateUser", 1)
+      "create_dt" => Map.get(param, "create_dt", now),
+      "update_user" => Map.get(param, "updateUser", 1),
+      "update_dt" => Map.get(param, "update_dt", now)
     }
   end
+
+  defp timestamp_to_ecto_datetime(obj) when is_map(obj) , do: obj
+  defp timestamp_to_ecto_datetime(timestamp) when is_integer(timestamp), do: timestamp |> Calendar.DateTime.Parse.js_ms!
 end
