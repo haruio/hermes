@@ -28,5 +28,10 @@ defmodule HApi.Router do
     post "/push/message", PushController, :create_message
     post "/push/token", PushController, :send_token
 
+    ## push reserved
+    post "/push/reserved/immediate/:id", PushController, :send_immediate_reserved
+    delete "/push/reserved/:id", PushController, :cancel_reserved
+    put "/push/reserved/:id", PushController, :update_reserved
+
   end
 end

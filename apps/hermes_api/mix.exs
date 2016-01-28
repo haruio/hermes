@@ -21,7 +21,7 @@ defmodule HApi.Mixfile do
   def application do
     [mod: {HApi, []},
      applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :mariaex]]
+                    :phoenix_ecto, :mariaex, :calendar]]
   end
 
   # Specifies which paths to compile per environment.
@@ -40,6 +40,7 @@ defmodule HApi.Mixfile do
      {:gettext, "~> 0.9"},
      {:timex, "~> 1.0.0-rc3"},
      {:exactor, "~> 2.2"},
+     {:calendar, "~> 0.12.4"},
      {:cowboy, "~> 1.0"}]
   end
 
