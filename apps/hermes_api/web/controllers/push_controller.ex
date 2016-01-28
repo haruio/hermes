@@ -44,6 +44,36 @@ defmodule HApi.PushController do
     json conn, result
   end
 
+  def cancel_reserved(conn, param) do
+    result = case get_push_service(conn) do
+               {:ok, service} -> PushService.cancel_reserved(service, param)
+               {:error, message} -> %{"error" => message}
+               _ -> %{"error" => "unknown error"}
+             end
+
+    json conn, result
+  end
+
+  def update_reserved(conn, param) do
+    result = case get_push_service(conn) do
+               {:ok, service} -> PushService.update_reserved(service, param)
+               {:error, message} -> %{"error" => message}
+               _ -> %{"error" => "unknown error"}
+             end
+
+    json conn, result
+  end
+
+  def send_immediate_reserved(conn, param) do
+    result = case get_push_service(conn) do
+               {:ok, service} -> PushService.send_immediate(service, param)
+               {:error, message} -> %{"error" => message}
+               _ -> %{"error" => "unknown error"}
+             end
+
+    json conn, result
+  end
+
   ## Private method
   defp get_push_service(conn) do
     service = get_req_header(conn, "notification-rest-token")

@@ -1,10 +1,6 @@
 defmodule Producer.PushProducer do
   use GenServer
 
-  defmodule State do
-    defstruct [:exchange, :router]
-  end
-
   def start_link(args \\ []) do
     GenServer.start_link(__MODULE__, args)
   end
@@ -21,7 +17,11 @@ defmodule Producer.PushProducer do
   end
 
   def publish_reserve(message) do
-    :poolboy.transaction(__MODULE__, fn(worker) -> GenServer.cast(worker, {:publish_reserve, message}) end)
+    # :poolboy.transaction(__MODULE__, fn(worker) -> GenServer.cast(worker, {:publish_reserve, message}) end)
+  end
+
+  def cancel_reserved(push_id) do
+
   end
 
   def handle_cast({:publish_immediate, message}, state) do
