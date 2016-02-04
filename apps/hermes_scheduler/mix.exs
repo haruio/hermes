@@ -18,7 +18,7 @@ defmodule HScheduler.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger],
+    [applications: [:logger, :quantum, :ecto, :mariaex, :hermes_queue],
      mod: {HScheduler, []}]
   end
 
@@ -36,6 +36,14 @@ defmodule HScheduler.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [
+      {:quantum, "~> 1.6"},
+      {:scrivener, "~> 1.1"},
+      {:ecto, "~> 1.0"},
+      {:mariaex, "~> 0.6.2"},
+      {:exactor, "~> 2.2"},
+      {:poolboy, "~> 1.5"},
+      {:hermes_queue, in_umbrella: true}
+    ]
   end
 end

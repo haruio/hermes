@@ -63,10 +63,6 @@ defmodule HApi.PushService do
     via_push_model({:new, param})
     |> insert_push
 
-    # publish to scheduler
-    message = build_reserve_message(param)
-    PushProducer.publish_reserve({:reserve, message})
-
     # return push id
     Map.take(param, ["pushId"])
   end

@@ -31,6 +31,7 @@ defmodule Producer.ProducerSup do
     [
       {:name, {:local, MailProducer}},
       {:worker_module, MailProducer},
+      {:strategy, :fifo},
       {:size, 10},
       {:max_overflow, 100}
     ]
