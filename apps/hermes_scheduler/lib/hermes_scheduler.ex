@@ -7,8 +7,10 @@ defmodule HScheduler do
     import Supervisor.Spec, warn: false
 
     children = [
-      # Define workers and child supervisors to be supervised
-      # worker(HScheduler.Worker, [arg1, arg2, arg3]),
+       worker(HScheduler.Repo, []),
+       supervisor(HScheduler.Store.StoreSup, []),
+       supervisor(HScheduler.Job.JobSup, []),
+       supervisor(HScheduler.Producer.ProducerSup, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
