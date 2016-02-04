@@ -17,7 +17,7 @@ defmodule Producer.PushProducer do
   end
 
   def publish_reserve(message) do
-    # :poolboy.transaction(__MODULE__, fn(worker) -> GenServer.cast(worker, {:publish_reserve, message}) end)
+    :poolboy.transaction(__MODULE__, fn(worker) -> GenServer.cast(worker, {:publish_reserve, message}) end)
   end
 
   def cancel_reserved(push_id) do
@@ -30,7 +30,7 @@ defmodule Producer.PushProducer do
   end
 
   def handle_cast({:publish_reserve, message}, state) do
-    state.router.publish_immediate(state.exchange, message)
+    state.router.publish_reserve(message)
     {:noreply, state}
   end
 end

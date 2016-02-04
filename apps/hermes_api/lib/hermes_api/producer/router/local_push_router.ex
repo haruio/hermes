@@ -16,6 +16,6 @@ defmodule Producer.Router.LocalPushRouter do
   end
 
   def publish_reserve({:reserve, %{push_id: push_id, push_tokens: push_tokens}}) do
-    HScheduler.Store.PushTokenStore.ad(push_id, push_tokens)
+    HScheduler.Store.PushTokenStore.add(push_id, push_tokens)
   end
 end
