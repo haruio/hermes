@@ -15,7 +15,7 @@ defmodule Producer.Router.LocalPushRouter do
     HQueue.Exchange.publish(exchange, message)
   end
 
-  def publish_reserve(exchange, message) do
-    IO.puts "local route reserve"
+  def publish_reserve({:reserve, %{push_id: push_id, push_tokens: push_tokens}}) do
+    HScheduler.Store.PushTokenStore.ad(push_id, push_tokens)
   end
 end
