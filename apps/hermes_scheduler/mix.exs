@@ -4,8 +4,8 @@ defmodule HScheduler.Mixfile do
   def project do
     [app: :hermes_scheduler,
      version: "0.0.1",
-     build_path: "../../_build",
-     config_path: "../../config/config.exs",
+     # build_path: "../../_build",
+     # config_path: "../../config/config.exs",
      deps_path: "../../deps",
      lockfile: "../../mix.lock",
      elixir: "~> 1.2",
@@ -18,7 +18,8 @@ defmodule HScheduler.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :quantum, :ecto, :mariaex, :hermes_queue],
+    [applications: [:logger, :quantum, :ecto, :mariaex, :hermes_queue,
+                   :exactor, :scrivener],
      mod: {HScheduler, []}]
   end
 
@@ -43,7 +44,10 @@ defmodule HScheduler.Mixfile do
       {:mariaex, "~> 0.6.2"},
       {:exactor, "~> 2.2"},
       {:poolboy, "~> 1.5"},
-      {:hermes_queue, in_umbrella: true}
+      {:hermes_queue, in_umbrella: true},
+      {:exrm, "~> 1.0.0-rc7" },
+      {:conform, "~> 1.0.0-rc8"},
+      {:conform_exrm, "~> 0.2.0"}
     ]
   end
 end

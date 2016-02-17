@@ -13,7 +13,8 @@ defmodule HPush.Mixfile do
   end
 
   def application do
-    [applications: [:logger, :gcm, :apns],
+    [applications: [:logger, :gcm, :apns,
+                    :poolboy, :poison, :httpoison, :exactor, :ecto, :mariaex, :hermes_queue],
      mod: {HPush, []}]
   end
 

@@ -21,7 +21,8 @@ defmodule HApi.Mixfile do
   def application do
     [mod: {HApi, []},
      applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :mariaex, :calendar]]
+                    :phoenix_ecto, :mariaex, :calendar,
+                    :hermes_queue, :exactor, :timex, :observer]]
   end
 
   # Specifies which paths to compile per environment.
@@ -36,11 +37,16 @@ defmodule HApi.Mixfile do
      {:phoenix_ecto, "~> 2.0"},
      {:mariaex, ">= 0.0.0"},
      {:phoenix_html, "~> 2.3"},
-     {:phoenix_live_reload, "~> 1.0", only: [:dev, :local]},
+     {:phoenix_live_reload, "~> 1.0", only: [:local]},
      {:gettext, "~> 0.9"},
      {:timex, "~> 1.0.0-rc3"},
      {:exactor, "~> 2.2"},
+     {:exrm, "~> 1.0.0-rc7" },
+     {:conform, "~> 1.0.0-rc8"},
+     {:conform_exrm, "~> 0.2.0"},
      {:calendar, "~> 0.12.4"},
+     {:hermes_queue, in_umbrella: true},
+     {:scrivener, "~> 1.1"},
      {:cowboy, "~> 1.0"}]
   end
 

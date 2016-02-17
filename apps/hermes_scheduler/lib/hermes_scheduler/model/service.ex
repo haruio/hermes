@@ -2,7 +2,6 @@ defmodule HScheduler.Model.Service do
   use Ecto.Model
 
   @primary_key {:service_id, :string, []}
-  @derive {Phoenix.Param, key: :service_id}
   schema "service" do
     field :service_nm, :string
     field :gcm_api_key, :string

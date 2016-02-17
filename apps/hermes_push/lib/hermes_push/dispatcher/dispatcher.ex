@@ -52,7 +52,6 @@ defmodule HPush.Dispatcher do
     tokens
     |> Stream.map(&(Map.get(&1, "pushToken")))
     |> Stream.chunk(@max_chunk, @max_chunk, [])
-    # |> Stream.chunk(1)
     |> Stream.each(fn(chunked_tokens) ->
       case provider_pool_name(push_type, opts) do
         {:ok, pool_name} ->
