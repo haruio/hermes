@@ -19,11 +19,17 @@ defmodule HApi.Mixfile do
   #
   # Type `mix help compile.app` for more information.
   def application do
-    [mod: {HApi, []},
-     applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :mariaex, :calendar,
-                    :hermes_queue, :exactor, :timex, :observer]]
+    [
+      mod: {HApi, []},
+      applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext,
+                     :phoenix_ecto, :mariaex, :calendar,
+                     :exactor, :timex] ++ env_applications(Mix.env)
+    ]
   end
+
+  def env_applications(:test), do: [:hermes_queue]
+  def env_applications(:local), do: [:hermes_queue]
+  def env_applications(_), do: []
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "web", "test/support"]
@@ -45,7 +51,7 @@ defmodule HApi.Mixfile do
      {:conform, "~> 1.0.0-rc8"},
      {:conform_exrm, "~> 0.2.0"},
      {:calendar, "~> 0.12.4"},
-     {:hermes_queue, in_umbrella: true},
+     {:hermes_queue, in_umbrella: true, only: [:local, :test]},
      {:scrivener, "~> 1.1"},
      {:cowboy, "~> 1.0"}]
   end

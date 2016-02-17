@@ -4,8 +4,8 @@ defmodule HUmbrellaMaster.Mixfile do
   def project do
     [app: :hermes_umbrella_master,
      version: "0.0.1",
-     # build_path: "../../_build",
-     # config_path: "../../config/config.exs",
+     build_path: "./_build",
+     config_path: "./config/config.exs",
      deps_path: "../../deps",
      lockfile: "../../mix.lock",
      elixir: "~> 1.2",
@@ -36,7 +36,7 @@ defmodule HUmbrellaMaster.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:exrm, "~> 1.0.0-rc7" },
+      {:exrm, "~> 1.0.0-rc8" },
       {:conform, "~> 1.0.0-rc8"},
       {:conform_exrm, "~> 0.2.0"},
       {:hermes_queue, in_umbrella: true},
