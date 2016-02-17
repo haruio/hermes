@@ -74,6 +74,24 @@ defmodule HApi.PushController do
     json conn, result
   end
 
+  def get_push_list(conn, param) do
+    result = case get_push_service(conn) do
+               {:ok, service} -> PushService.get_push_list(service, param)
+               {:error, message} -> %{"error" => message}
+               _ -> %{"error" => "unknown error"}
+             end
+    json conn, result
+  end
+
+  def get_push(conn, param) do
+    result = case get_push_service(conn) do
+               {:ok, service} -> PushService.get_push(service, param)
+               {:error, message} -> %{"error" => message}
+               _ -> %{"error" => "unknown error"}
+             end
+    json conn, result
+  end
+
   ## Private method
   defp get_push_service(conn) do
     service = get_req_header(conn, "notification-rest-token")

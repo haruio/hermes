@@ -1,6 +1,7 @@
 defmodule HApi.PushService do
   alias HApi.Push
   alias HApi.Push.Query, as: PushQuery
+  alias HApi.PushStats.Query, as: PushStatsQuery
   alias Util.KeyGenerator
   alias Producer.PushProducer
   alias Code.PushStatus
@@ -126,7 +127,8 @@ defmodule HApi.PushService do
     push = PushQuery.select_one_by_push_id(push_id)
 
     if push.push_status == PushStatus.cd_reserved do
-      changeset = Push.changeset(push, %{publish_dt: Ecto.DateTime.utc})
+      now = Ecto.DateTime.utc
+      changeset = Push.changeset(push, %{publish_dt: now, publish_start_dt: now})
       case PushQuery.update(changeset) do
         {:ok, _} ->
           PushProducer.cancel_reserved(push_id)
@@ -154,6 +156,16 @@ defmodule HApi.PushService do
         send_ok
       true -> send_error(%{"message" => "Invalid push status"})
     end
+  end
+
+  def get_push_list(service, param) do
+    PushQuery.select([service_id: service.service_id], Map.take(param, ["page", "pageSize"]))
+    |> via_push_page_dto
+  end
+
+  def get_push(service, param = %{"id" => id}) do
+    PushQuery.select_one([push_id: id])
+    |> via_push_dto
   end
 
   ## Private method
@@ -229,4 +241,55 @@ defmodule HApi.PushService do
   defp timestamp_to_ecto_datetime(nil), do: nil
   defp timestamp_to_ecto_datetime(obj) when is_map(obj) , do: obj
   defp timestamp_to_ecto_datetime(timestamp) when is_integer(timestamp), do: timestamp |> Calendar.DateTime.Parse.js_ms!
+
+  defp ecto_datetime_to_timestamp(nil), do: nil
+  defp ecto_datetime_to_timestamp(datetime), do: datetime |> Ecto.DateTime.cast!
+
+  def via_push_page_dto(page = %Scrivener.Page{}) do
+    %{
+      pageSize: page.page_size,
+      startPageNo: 1,
+      pageNo: page.page_number,
+      endPageNo: page.total_pages,
+      totalCount: page.total_entries,
+      data: Map.get(page, :entries, []) |> Enum.map(&via_push_dto/1)
+    }
+  end
+
+  def via_push_dto(model = %HApi.Push{}) do
+    %{
+      "pushId" => model.push_id,
+      "serviceId" => model.service_id,
+      "extra" => Poison.decode!(model.extra),
+      "message" => %{
+        "title" => model.title,
+        "body" => model.body
+      },
+      "condition" => Poison.decode!(model.push_condition),
+      "updateDt" => model.update_dt |> ecto_datetime_to_timestamp,
+      "createDt" => model.create_dt |> ecto_datetime_to_timestamp,
+      "pushStatus" => model.push_status,
+      "publishStartDt" => model.publish_start_dt |> ecto_datetime_to_timestamp,
+      "publishEndDt" => model.publish_end_dt |> ecto_datetime_to_timestamp,
+      "publishTime" => model.publish_end_dt |> ecto_datetime_to_timestamp,
+      "pushStats" => get_stats_summary(model.push_id)
+    }
+  end
+
+  def get_stats_summary(push_id) do
+    push_id
+    |> PushStatsQuery.summary_by_push_id
+    |> Enum.reduce(%{"published" => 0, "opened" => 0, "received" => 0}, fn([key|[value]], acc) ->
+      case key do
+        "PUB" ->
+          %{acc | "published" =>  value |> Decimal.to_string |> Integer.parse |> elem(0) }
+        "OPN" ->
+          %{acc | "opened" => value |> Decimal.to_string |> Integer.parse |> elem(0) }
+        "RCV" ->
+          %{acc | "received" => value |> Decimal.to_string |> Integer.parse |> elem(0) }
+        _ ->
+      end
+    end)
+  end
+
 end

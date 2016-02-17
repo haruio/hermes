@@ -3,7 +3,6 @@ defmodule HApi.Push do
 
   @primary_key {:push_id, :string, []}
   @derive {Phoenix.Param, key: :push_id}
-
   schema "push" do
     field :service_id, :string
     field :push_condition, :string
@@ -50,6 +49,16 @@ defmodule HApi.Push.Query do
 
   def update(changeset) do
     Repo.update(changeset)
+  end
+
+  def select(query, pagination \\ %{} ) do
+    from(p in HApi.Push, where: ^query)
+    |> Repo.paginate(page: Map.get(pagination, "page", 1), page_size: Map.get(pagination, "pageSize", 10))
+  end
+
+  def select_one(query) do
+    from(p in HApi.Push, where: ^query)
+    |> Repo.one
   end
 
   def select_one_by_push_id(nil), do: nil

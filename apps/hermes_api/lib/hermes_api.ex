@@ -10,7 +10,6 @@ defmodule HApi do
       supervisor(HApi.Endpoint, []),
       supervisor(HApi.Repo, []),
       supervisor(Producer.ProducerSup, [])
-      # worker(Producer.PushProducer, []) # TODO change to poolboy
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
