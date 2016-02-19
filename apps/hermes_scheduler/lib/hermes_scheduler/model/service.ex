@@ -7,6 +7,8 @@ defmodule HScheduler.Model.Service do
     field :gcm_api_key, :string
     field :apns_key, :string
     field :apns_cert, :string
+    field :apns_dev_key, :string
+    field :apns_dev_cert, :string
     field :rest_token, :string
     field :android_token, :string
     field :ios_token, :string
@@ -16,7 +18,7 @@ defmodule HScheduler.Model.Service do
     field :update_user, :integer
   end
 
-  @required_fields ~w(service_id service_nm gcm_api_key apns_key apns_cert rest_token android_token ios_token)
+  @required_fields ~w(service_id service_nm gcm_api_key apns_key apns_cert rest_token android_token ios_token apns_dev_cert apns_dev_key)
   @optional_fields ~w(create_dt update_dt create_user update_user)
 
   @doc """

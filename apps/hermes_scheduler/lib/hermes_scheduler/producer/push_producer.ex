@@ -6,6 +6,7 @@ defmodule HScheduler.Producer.PushProducer do
   alias HScheduler.Model.Push
   alias HScheduler.Model.Push.Query, as: PushQuery
   alias HScheduler.Model.Service.Query, as: ServiceQuery
+  alias HScheduler.Model.PushOption.Query, as: PushOptionQuery
   alias HScheduler.Store.PushTokenStore
 
   def pool_name, do: __MODULE__
@@ -51,18 +52,20 @@ defmodule HScheduler.Producer.PushProducer do
         Push.changeset(push, %{push_status: "PUING", publish_start_dt: Ecto.DateTime.utc})
         |> PushQuery.update
 
+        options = PushOptionQuery.select(push_id: push.push_id)
+
         ## publish tokens
         tokens
-        |> Enum.map(&(publish_task(push, service, state, &1)))
+        |> Enum.map(&(publish_task(push, service, options, state, &1)))
         |> Enum.map(&Task.await/1)
         |> done(push.push_id)
     end
   end
 
-  def publish_task(push, service, state, {_push_id, tokens}) do
+  def publish_task(push, service, options, state, {push_id, tokens}) do
     Task.async(fn ->
       ## publish message
-      message = build_message(push, service, tokens)
+      message = build_message(push, service, options, tokens)
       HQueue.Exchange.publish(state.exchange, message)
     end)
   end
@@ -71,12 +74,40 @@ defmodule HScheduler.Producer.PushProducer do
     PushTokenStore.delete(push_id)
   end
 
+  defp build_message(push_model, service_model, option_models, tokens) do
+    options = option_models |> build_options
 
-  def build_message(push_model, service_model, tokens) do
     push_model
     |> Map.take([:push_id, :service_id, :title, :body, :publish_time, :extra])
     |> Map.put(:push_tokens, tokens)
-    |> Map.put(:apns_env, :dev) ## TODO apns_options
-    |> Map.merge(Map.take(service_model, [:gcm_api_key, :apns_key, :apns_cert]))
+    |> Map.put(:options, options)
+    |> Map.put(:gcm_api_key, Map.get(service_model,:gcm_api_key))
+    |> Map.merge(get_apns_key(service_model, options[:apns]["env"]))
+  end
+
+  def get_apns_key(service_model, nil), do: get_apns_key(service_model, "dev")
+  def get_apns_key(service_model, "dev") do
+    %{
+      apns_key: Map.get(service_model, :apns_dev_key),
+      apns_cert: Map.get(service_model, :apns_dev_cert)
+    }
+  end
+  def get_apns_key(service_model, "prod") do
+    %{
+      apns_key: Map.get(service_model, :apns_key),
+      apns_cert: Map.get(service_model, :apns_cert)
+    }
+  end
+
+  defp build_options([]), do: %{}
+  defp build_options(options) do
+    options
+    |> Enum.reduce(%{apns: nil, gcm: nil}, fn(option, acc) ->
+      case option.push_type do
+        "APNS" -> %{acc | apns: option.option |> Poison.decode! }
+        "GCM" -> %{acc | gcm: option.optoin |> Poison.decode! }
+        _ -> acc
+      end
+    end)
   end
 end
