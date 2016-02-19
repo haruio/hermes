@@ -2,6 +2,7 @@ defmodule HApi.PushService do
   alias HApi.Push
   alias HApi.Push.Query, as: PushQuery
   alias HApi.PushStats.Query, as: PushStatsQuery
+  alias HApi.PushOption.Query, as: PushOptionQuery
   alias Util.KeyGenerator
   alias Producer.PushProducer
   alias Code.PushStatus
@@ -13,11 +14,15 @@ defmodule HApi.PushService do
 
     # save push
     push = via_push_model({:new, param})
-    |> insert_push
+    |> PushQuery.insert_model
+
+    # save push options
+    options = via_push_option_models(param)
+    |> Enum.map(&PushOptionQuery.insert_model/1)
 
     # publish to queue
-    message = build_message(push, service,  Map.get(param, "pushTokens", []))
-    PushProducer.publish_immediate(message)
+    build_message(push, service, options, Map.get(param, "pushTokens", []))
+    |> PushProducer.publish_immediate
 
     # send response
     Map.take(param, ["pushId"])
@@ -31,7 +36,11 @@ defmodule HApi.PushService do
 
     # save push
     push = via_push_model({:new, param})
-    |> insert_push
+    |> PushQuery.insert_model
+
+    # save push options
+    options = via_push_option_models(param)
+    |> Enum.map(&PushOptionQuery.insert_model/1)
 
     # publish to scheduler
     message = build_reserve_message(param)
@@ -48,7 +57,11 @@ defmodule HApi.PushService do
 
     # save push
     via_push_model({:new, param})
-    |> insert_push
+    |> PushQuery.insert_model
+
+    # save push options
+    options = via_push_option_models(param)
+    |> Enum.map(&PushOptionQuery.insert_model/1)
 
     # return push id
     Map.take(param, ["pushId"])
@@ -62,7 +75,11 @@ defmodule HApi.PushService do
 
     # save push
     via_push_model({:new, param})
-    |> insert_push
+    |> PushQuery.insert_model
+
+    # save push options
+    options = via_push_option_models(param)
+    |> Enum.map(&PushOptionQuery.insert_model/1)
 
     # return push id
     Map.take(param, ["pushId"])
@@ -70,11 +87,7 @@ defmodule HApi.PushService do
 
 
   def send_token(service, param) do
-    # get push message
-    push = param
-    |> Map.get("pushId")
-    |> PushQuery.select_one_by_push_id
-
+    push = PushQuery.select_one_by_push_id(param["pushId"])
     cond do
       Map.get(push, :push_status) == PushStatus.cd_reserved ->
         send_token(:reserve, service, param, push)
@@ -84,8 +97,11 @@ defmodule HApi.PushService do
   end
 
   def send_token(:immediate, service, param, push) do
+    # select push options
+    options = PushOptionQuery.select(push_id: param["pushId"])
+
     # publish push
-    message = build_message(push, service,  Map.get(param, "pushTokens", []))
+    message = build_message(push, service, options, Map.get(param, "pushTokens", []))
 
     # publish message
     PushProducer.publish_immediate(message)
@@ -175,13 +191,31 @@ defmodule HApi.PushService do
     |> Map.put("pushId", create_push_id(service_id))
   end
 
-  defp build_message(push_model, service_model, tokens) do
+
+  defp build_message(push_model, service_model, option_models, tokens) do
+    options = option_models |> build_options
+
     push_model
     |> Map.take([:push_id, :service_id, :title, :body, :publish_time, :extra])
     |> Map.put(:push_tokens, tokens)
-    |> Map.put(:apns_env, :dev) ## TODO apns_options
-    |> Map.merge(Map.take(service_model, [:gcm_api_key, :apns_key, :apns_cert]))
+    |> Map.put(:options, options)
+    |> Map.put(:gcm_api_key, Map.get(service_model,:gcm_api_key))
+    |> Map.merge(get_apns_key(service_model, options[:apns]["env"]))
   end
+
+  def get_apns_key(service_model, "dev") do
+    %{
+      apns_key: Map.get(service_model, :apns_dev_key),
+      apns_cert: Map.get(service_model, :apns_dev_cert)
+    }
+  end
+  def get_apns_key(service_model, "prod") do
+    %{
+      apns_key: Map.get(service_model, :apns_key),
+      apns_cert: Map.get(service_model, :apns_cert)
+    }
+  end
+  def get_apns_key(service_model, nil), do: get_apns_key(service_model, "dev")
 
   defp build_reserve_message(param) when is_map(param), do: build_reserve_message(Map.get(param, "pushId"), Map.get(param, "pushTokens"))
   defp build_reserve_message(%HApi.Push{push_id: push_id}, tokens), do: build_reserve_message(push_id, tokens)
@@ -192,9 +226,16 @@ defmodule HApi.PushService do
     end
   end
 
-  defp insert_push(model) do
-    Push.changeset(%Push{}, model)
-    |> PushQuery.insert
+  defp build_options([]), do: %{}
+  defp build_options(options) do
+    options
+    |> Enum.reduce(%{apns: nil, gcm: nil}, fn(option, acc) ->
+      case option.push_type do
+        "APNS" -> %{acc | apns: option.option |> Poison.decode! }
+        "GCM" -> %{acc | gcm: option.optoin |> Poison.decode! }
+        _ -> acc
+      end
+    end)
   end
 
   defp send_ok(obj \\ %{}), do: Map.merge(%{"status" => "ok"}, obj)
@@ -236,6 +277,19 @@ defmodule HApi.PushService do
       "update_user" => Map.get(param, "updateUser", 1),
       "update_dt" => Map.get(param, "updateDt")
     }
+  end
+
+
+  defp via_push_option_models(param) do
+    param
+    |> Map.get("options", %{})
+    |> Map.to_list
+    |> Enum.filter_map(fn({push_type, option}) -> map_size(option) > 0 end,
+      fn({push_type, option}) ->
+        %{"push_id" => Map.get(param, "pushId"),
+          "push_type" => push_type |> String.upcase,
+          "option" => option |> Poison.encode! }
+      end)
   end
 
   defp timestamp_to_ecto_datetime(nil), do: nil

@@ -13,13 +13,14 @@ defmodule HApi.Push do
     field :body, :string
     field :title, :string
     field :extra, :string
+    field :request_cnt, :integer
     field :create_user, :integer
     field :update_user, :integer
     field :create_dt, Ecto.DateTime, default: Ecto.DateTime.utc
     field :update_dt, Ecto.DateTime, default: Ecto.DateTime.utc
   end
 
-  @required_fields ~w(push_id body title push_condition extra service_id push_status )
+  @required_fields ~w(push_id body title push_condition extra service_id push_status)
   @optional_fields ~w(create_user update_user publish_dt create_dt update_dt)
 
 
@@ -40,6 +41,10 @@ defmodule HApi.Push.Query do
   alias HApi.Repo
   alias Code.PushStatus
 
+  def insert_model(model) do
+    HApi.Push.changeset(%HApi.Push{}, model)
+    |> insert
+  end
   def insert(changeset) do
     case Repo.insert(changeset) do
       {:ok, push} -> push
