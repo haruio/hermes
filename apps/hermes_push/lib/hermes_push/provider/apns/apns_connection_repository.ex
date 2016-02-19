@@ -3,9 +3,15 @@ defmodule HPush.Provider.APNSConnectionRepository do
 
   defstart start_link(args \\ %{}), do: initial_state(args)
 
+  @default_apns_env :dev
+
   defcall get_repository(message), state: state do
     service_id = Map.get(message, :service_id)
-    env = Map.get(message, :apns_env)
+    env = case message[:options][:apns]["env"] do
+      "prod" -> :prod
+      "dev" -> :dev
+        _ -> @default_apns_env
+    end
 
     case Map.get(state, service_id, nil) do
       nil ->
@@ -18,6 +24,7 @@ defmodule HPush.Provider.APNSConnectionRepository do
         reply({:ok, p})
     end
   end
+
 
   def pool_name(service_id, env), do: Atom.to_string(env) <> "::" <> service_id |> APNS.pool_name
   def pool_config(message) do
@@ -40,5 +47,4 @@ defmodule HPush.Provider.APNSConnectionRepository do
       key: config.key
     ]
   end
-
 end
