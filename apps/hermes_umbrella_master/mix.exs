@@ -36,7 +36,7 @@ defmodule HUmbrellaMaster.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:exrm, "~> 1.0.0-rc8" },
+      {:exrm, "~> 1.0.0-rc7" },
       {:conform, "~> 1.0.0-rc8"},
       {:conform_exrm, "~> 0.2.0"},
       {:hermes_queue, in_umbrella: true},

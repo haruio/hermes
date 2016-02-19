@@ -7,7 +7,7 @@ use Mix.Config
 # watchers to your application. For example, we use it
 # with brunch.io to recompile .js and .css sources.
 config :hermes_api, HApi.Endpoint,
-  http: [port: 4000],
+  http: [port: 2000],
   debug_errors: true,
   code_reloader: false,
   cache_static_lookup: false,
