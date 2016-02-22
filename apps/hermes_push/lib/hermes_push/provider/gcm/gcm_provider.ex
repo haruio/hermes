@@ -1,5 +1,7 @@
 defmodule HPush.Provider.GCMProvider do
   use ExActor.GenServer
+  alias HPush.Model.PushStats.Query, as: PushStatsQuery
+  alias HPush.Model.PushStats, as: PushStats
 
   @default_feedback "http://52.76.122.168:9090"
 
@@ -11,7 +13,14 @@ defmodule HPush.Provider.GCMProvider do
     {:ok, gcm_res} = GCM.push(gcm_key, tokens, build_payload(message))
 
     ## TODO send feedback
+
     ## TODO insert push log
+    PushStatsQuery.insert(%{push_id: message[:push_id],
+                            ststs_cd: PushStats.cd_published,
+                            stats_cnt: length(tokens),
+                            stats_start_dt: Ecto.DateTime.utc,
+                            stats_end_dt: Ecto.DateTime.utc})
+
     noreply
   end
 
