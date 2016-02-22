@@ -1,6 +1,5 @@
 defmodule HPush.Provider.APNSProviderSup do
   use Supervisor
-
   alias HPush.Provider.APNSProvider
   alias HPush.Provider.APNSConnectionRepository, as: ConnRepo
 
