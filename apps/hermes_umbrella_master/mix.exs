@@ -4,7 +4,8 @@ defmodule HUmbrellaMaster.Mixfile do
   def project do
     [app: :hermes_umbrella_master,
      version: "0.0.1",
-     deps_path: "../../deps",
+     config_path: "./config/config.exs",
+     deps_path: "./deps",
      lockfile: "../../mix.lock",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
@@ -16,7 +17,7 @@ defmodule HUmbrellaMaster.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :hermes_queue, :hermes_api, :hermes_push, :hermes_scheduler]]
+    [applications: [:logger, :hermes_queue, :hermes_api, :hermes_push, :hermes_scheduler, :conform, :conform_exrm]]
   end
 
   # Dependencies can be Hex packages:
