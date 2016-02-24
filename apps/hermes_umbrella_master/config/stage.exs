@@ -27,29 +27,37 @@ config :phoenix, :stacktrace_depth, 20
 config :hermes_api, HApi.Repo,
 adapter: Ecto.Adapters.MySQL,
 username: "makeus_hermes",
-password: "apdlzmdjtm20!%gpfmaptm",
+password: "apdlzjtm20!%gpfmaptm",
 database: "mks_hermes",
-hostname: "172.18.3.126",
-port: "4406",
+hostname: "54.62.129.13",
+port: 16603,
 pool_size: 5
 
 config :hermes_push, HPush.Repo,
 adapter: Ecto.Adapters.MySQL,
 username: "makeus_hermes",
-password: "apdlzmdjtm20!%gpfmaptm",
+password: "apdlzjtm20!%gpfmaptm",
 database: "mks_hermes",
-hostname: "172.18.3.126",
-port: "4406",
+hostname: "54.62.129.13",
+port: 16603,
 pool_size: 5
 
 config :hermes_scheduler, HScheduler.Repo,
 adapter: Ecto.Adapters.MySQL,
 username: "makeus_hermes",
-password: "apdlzmdjtm20!%gpfmaptm",
+password: "apdlzjtm20!%gpfmaptm",
 database: "mks_hermes",
-hostname: "172.18.3.126",
-port: "4406",
+hostname: "54.62.129.13",
+port: 16603,
 pool_size: 5
+
+config :apns,
+callback_module:    APNS.Callback,
+timeout:            30,
+feedback_interval:  1200,
+reconnect_after:    1000,
+support_old_ios:    true,
+pools: [ ]
 
 config :hermes_push, HPush.Provider.GCMProvider,
 feedback: "http://52.76.122.168:9090"
@@ -59,14 +67,6 @@ feedback: "http://52.76.122.168:9090"
 
 config :hermes_api, Producer.PushProducer,
 adapter: Producer.Router.LocalPushRouter
-
-config :apns,
-callback_module:    APNS.Callback,
-timeout:            30,
-feedback_interval:  1200,
-reconnect_after:    1000,
-support_old_ios:    true,
-pools: [ ]
 
 config :hermes_push, HPush.Dispatcher,
 apn: HPush.Provider.APNSProvider,

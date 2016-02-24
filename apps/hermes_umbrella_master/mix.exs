@@ -6,7 +6,7 @@ defmodule HUmbrellaMaster.Mixfile do
      version: "0.0.1",
      config_path: "./config/config.exs",
      deps_path: "./deps",
-     lockfile: "../../mix.lock",
+     lockfile: "./mix.lock",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
