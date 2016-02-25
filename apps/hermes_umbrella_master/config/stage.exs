@@ -29,7 +29,7 @@ adapter: Ecto.Adapters.MySQL,
 username: "makeus_hermes",
 password: "apdlzjtm20!%gpfmaptm",
 database: "mks_hermes",
-hostname: "54.62.129.13",
+hostname: "54.64.129.13",
 port: 16603,
 pool_size: 5
 
@@ -38,7 +38,7 @@ adapter: Ecto.Adapters.MySQL,
 username: "makeus_hermes",
 password: "apdlzjtm20!%gpfmaptm",
 database: "mks_hermes",
-hostname: "54.62.129.13",
+hostname: "54.64.129.13",
 port: 16603,
 pool_size: 5
 
@@ -47,7 +47,7 @@ adapter: Ecto.Adapters.MySQL,
 username: "makeus_hermes",
 password: "apdlzjtm20!%gpfmaptm",
 database: "mks_hermes",
-hostname: "54.62.129.13",
+hostname: "54.64.129.13",
 port: 16603,
 pool_size: 5
 
