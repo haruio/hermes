@@ -1,5 +1,15 @@
 use Mix.Config
 
+config :hermes_api, HApi.Endpoint,
+live_reload: [
+  patterns: [
+    ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
+    ~r{priv/gettext/.*(po)$},
+    ~r{web/views/.*(ex)$},
+    ~r{web/templates/.*(eex)$}
+  ]
+]
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #

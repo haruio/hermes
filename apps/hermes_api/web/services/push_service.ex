@@ -297,7 +297,12 @@ defmodule HApi.PushService do
   defp timestamp_to_ecto_datetime(timestamp) when is_integer(timestamp), do: timestamp |> Calendar.DateTime.Parse.js_ms!
 
   defp ecto_datetime_to_timestamp(nil), do: nil
-  defp ecto_datetime_to_timestamp(datetime), do: datetime |> Ecto.DateTime.cast!
+  defp ecto_datetime_to_timestamp(datetime) do
+    datetime
+    |> Ecto.DateTime.to_erl
+    |> Calendar.DateTime.from_erl!("Etc/UTC")
+    |> Calendar.DateTime.Format.js_ms
+  end
 
   def via_push_page_dto(page = %Scrivener.Page{}) do
     %{
