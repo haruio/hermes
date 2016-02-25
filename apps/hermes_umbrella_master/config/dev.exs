@@ -27,28 +27,28 @@ config :phoenix, :stacktrace_depth, 20
 config :hermes_api, HApi.Repo,
 adapter: Ecto.Adapters.MySQL,
 username: "makeus_hermes",
-password: "apdlzmdjtm20!%gpfmaptm",
+password: "apdlzjtm20!%gpfmaptm",
 database: "mks_hermes",
 hostname: "172.18.3.126",
-port: "4406",
+port: 4406,
 pool_size: 5
 
 config :hermes_push, HPush.Repo,
 adapter: Ecto.Adapters.MySQL,
 username: "makeus_hermes",
-password: "apdlzmdjtm20!%gpfmaptm",
+password: "apdlzjtm20!%gpfmaptm",
 database: "mks_hermes",
 hostname: "172.18.3.126",
-port: "4406",
+port: 4406,
 pool_size: 5
 
 config :hermes_scheduler, HScheduler.Repo,
 adapter: Ecto.Adapters.MySQL,
 username: "makeus_hermes",
-password: "apdlzmdjtm20!%gpfmaptm",
+password: "apdlzjtm20!%gpfmaptm",
 database: "mks_hermes",
 hostname: "172.18.3.126",
-port: "4406",
+port: 4406,
 pool_size: 5
 
 config :hermes_push, HPush.Provider.GCMProvider,
