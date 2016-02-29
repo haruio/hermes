@@ -3,6 +3,7 @@ defmodule Code.PushStatus do
   @publishing "PUING"
   @published "PUED"
   @canceled "CAED"
+  @canceling "CAING"
   @reserved "RVED"
 
   def cd_approved, do: @approved
@@ -10,4 +11,5 @@ defmodule Code.PushStatus do
   def cd_published, do: @published
   def cd_canceled, do: @canceled
   def cd_reserved, do: @reserved
+  def cd_canceling, do: @canceling
 end

@@ -13,9 +13,14 @@ defmodule HPush.Mixfile do
   end
 
   def application do
-    [applications: [:logger],
+    [applications: [:logger, :gcm, :apns,
+                    :poolboy, :poison, :httpoison, :exactor, :ecto, :mariaex] ++ env_applications(Mix.env),
      mod: {HPush, []}]
   end
+
+  def env_applications(:test), do: [:hermes_queue]
+  def env_applications(:local), do: [:hermes_queue]
+  def env_applications(_), do: []
 
   defp deps do
     [
@@ -29,7 +34,8 @@ defmodule HPush.Mixfile do
       {:mariaex, "~> 0.6.2"},
       {:exrm, "~> 1.0.0-rc7" },
       {:conform, "~> 1.0.0-rc8"},
-      {:conform_exrm, "~> 0.2.0"}
+      {:conform_exrm, "~> 0.2.0"},
+      {:hermes_queue, in_umbrella: true, only: [:local, :test]}
     ]
   end
 end

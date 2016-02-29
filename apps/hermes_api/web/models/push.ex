@@ -3,7 +3,6 @@ defmodule HApi.Push do
 
   @primary_key {:push_id, :string, []}
   @derive {Phoenix.Param, key: :push_id}
-
   schema "push" do
     field :service_id, :string
     field :push_condition, :string
@@ -14,14 +13,15 @@ defmodule HApi.Push do
     field :body, :string
     field :title, :string
     field :extra, :string
+    field :request_cnt, :integer
     field :create_user, :integer
     field :update_user, :integer
     field :create_dt, Ecto.DateTime, default: Ecto.DateTime.utc
     field :update_dt, Ecto.DateTime, default: Ecto.DateTime.utc
   end
 
-  @required_fields ~w(push_id body title push_condition extra service_id push_status )
-  @optional_fields ~w(create_user update_user publish_dt)
+  @required_fields ~w(push_id body title push_condition extra service_id push_status)
+  @optional_fields ~w(create_user update_user publish_dt create_dt update_dt)
 
 
   @doc """
@@ -39,7 +39,12 @@ end
 defmodule HApi.Push.Query do
   import Ecto.Query
   alias HApi.Repo
+  alias Code.PushStatus
 
+  def insert_model(model) do
+    HApi.Push.changeset(%HApi.Push{}, model)
+    |> insert
+  end
   def insert(changeset) do
     case Repo.insert(changeset) do
       {:ok, push} -> push
@@ -47,6 +52,21 @@ defmodule HApi.Push.Query do
     end
   end
 
+  def update(changeset) do
+    Repo.update(changeset)
+  end
+
+  def select(query, pagination \\ %{} ) do
+    from(p in HApi.Push, where: ^query)
+    |> Repo.paginate(page: Map.get(pagination, "page", 1), page_size: Map.get(pagination, "pageSize", 10))
+  end
+
+  def select_one(query) do
+    from(p in HApi.Push, where: ^query)
+    |> Repo.one
+  end
+
+  def select_one_by_push_id(nil), do: nil
   def select_one_by_push_id([push_id]), do: select_one_by_push_id(push_id)
   def select_one_by_push_id(push_id) do
     push_id

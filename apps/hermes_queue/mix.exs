@@ -16,7 +16,8 @@ defmodule HQueue.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger],
+    [applications: [:logger,
+                   :poolboy, :exactor, :uuid],
      mod: {HQueue, []}]
   end
 
@@ -36,7 +37,11 @@ defmodule HQueue.Mixfile do
   defp deps do
     [
       {:poolboy, "~> 1.5"},
-      {:exactor, "~> 2.2"}
+      {:exactor, "~> 2.2"},
+      {:uuid, "~> 1.1"},
+      {:exrm, "~> 1.0.0-rc7" },
+      {:conform, "~> 1.0.0-rc8"},
+      {:conform_exrm, "~> 0.2.0"}
     ]
   end
 end
