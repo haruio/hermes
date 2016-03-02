@@ -57,7 +57,7 @@ defmodule HApi.Push.Query do
   end
 
   def select(query, pagination \\ %{} ) do
-    from(p in HApi.Push, where: ^query)
+    from(p in HApi.Push, where: ^query, order_by: [desc: p.create_dt])
     |> Repo.paginate(page: Map.get(pagination, "page", 1), page_size: Map.get(pagination, "pageSize", 10))
   end
 
