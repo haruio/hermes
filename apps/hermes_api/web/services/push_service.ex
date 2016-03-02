@@ -275,7 +275,8 @@ defmodule HApi.PushService do
       "create_user" => Map.get(param, "createUser", 1),
       "create_dt" => Map.get(param, "createDt"),
       "update_user" => Map.get(param, "updateUser", 1),
-      "update_dt" => Map.get(param, "updateDt")
+      "update_dt" => Map.get(param, "updateDt"),
+      "request_cnt" => Map.get(param, "requestCnt")
     }
   end
 
