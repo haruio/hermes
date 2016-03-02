@@ -1,6 +1,5 @@
 defmodule HPush.Provider.APNSProvider do
   use ExActor.GenServer
-  alias HPush.Model.PushStats.Query, as: PushStatsQuery
   alias HPush.Model.PushStats, as: PushStats
 
   @default_feedback "http://52.76.122.168:9090"
@@ -19,8 +18,7 @@ defmodule HPush.Provider.APNSProvider do
 
     ## TODO send feedback
 
-    ## TODO insert push log
-    PushStatsQuery.insert(%{push_id: message[:push_id],
+    HPush.StatsChecker.add(%{push_id: message[:push_id],
                             ststs_cd: PushStats.cd_published,
                             stats_cnt: length(tokens),
                             stats_start_dt: Ecto.DateTime.utc,
