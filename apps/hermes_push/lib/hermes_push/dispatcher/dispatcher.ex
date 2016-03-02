@@ -37,6 +37,7 @@ defmodule HPush.Dispatcher do
   end
 
   defcast dispatch(job), state: state do
+    HPush.StatusCheker.check(job.push_id, length(job.push_tokens))
     message = Map.delete(job, :push_tokens)
     Map.get(job, :push_tokens)
     |> Enum.group_by(fn(token) -> Map.get(token, "pushType") end)

@@ -14,8 +14,7 @@ defmodule HPush.Provider.GCMProvider do
 
     ## TODO send feedback
 
-    ## TODO insert push log
-    PushStatsQuery.insert(%{push_id: message[:push_id],
+    HPush.StatsChecker.add(%{push_id: message[:push_id],
                             ststs_cd: PushStats.cd_published,
                             stats_cnt: length(tokens),
                             stats_start_dt: Ecto.DateTime.utc,

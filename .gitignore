@@ -151,3 +151,4 @@ tramp
 # cask packages
 .cask/
 
+*_test.sh
