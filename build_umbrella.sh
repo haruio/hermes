@@ -16,8 +16,8 @@ env MIX_ENV=$ENV mix deps.get
 rm $UMBRELLA_PATH/config/hermes_umbrella_master.conf  $UMBRELLA_PATH/config/hermes_umbrella_master.schema.exs
 
 env MIX_ENV=$ENV mix conform.new &&
-env MIX_ENV=$ENV mix conform.configure
-# env MIX_ENV=$ENV mix conform.release
+env MIX_ENV=$ENV mix conform.configure &&
+env MIX_ENV=$ENV mix conform.release
 
 env MIX_ENV=$ENV mix compile &&
 env MIX_ENV=$ENV mix release.clean --no-confirm &&
