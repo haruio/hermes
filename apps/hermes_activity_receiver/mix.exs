@@ -20,8 +20,8 @@ defmodule HActivity.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {HActivity, []},
-     applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :mariaex]]
+     applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext, :poolboy
+                    :phoenix_ecto, :mariaex, :poison]]
   end
 
   # Specifies which paths to compile per environment.
@@ -36,9 +36,14 @@ defmodule HActivity.Mixfile do
      {:phoenix_ecto, "~> 2.0"},
      {:mariaex, ">= 0.0.0"},
      {:phoenix_html, "~> 2.3"},
-     {:phoenix_live_reload, "~> 1.0", only: :dev},
+     {:phoenix_live_reload, "~> 1.0", only: [:dev, :local]},
      {:gettext, "~> 0.9"},
-     {:cowboy, "~> 1.0"}]
+     {:cowboy, "~> 1.0"},
+     {:exactor, "~> 2.2"},
+     {:connection, "~> 1.0"},
+     {:poison, "~> 1.5"},
+     {:poolboy, "~> 1.5"}
+    ]
   end
 
   # Aliases are shortcut or tasks specific to the current project.
