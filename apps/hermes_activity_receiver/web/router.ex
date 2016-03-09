@@ -5,7 +5,10 @@ defmodule HActivity.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", HActivity do
+  scope "/v1/feedback", HActivity do
     pipe_through :api
+
+    post "/:id/received", PushFeedbackController, :received
+    post "/:id/opened", PushFeedbackController, :opened
   end
 end
