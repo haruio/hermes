@@ -35,14 +35,14 @@ config :phoenix, :stacktrace_depth, 20
 
 # Configure your database
 config :hermes_activity_receiver, HActivity.Repo,
-  adapter: Ecto.Adapters.MySQL,
-  username: "root",
-  password: "foretouch919293",
-  database: "mks_hermes",
-  hostname: "127.0.0.1",
-  pool_size: 5
+adapter: Ecto.Adapters.MySQL,
+username: "root",
+password: "foretouch919293",
+database: "mks_hermes",
+hostname: "127.0.0.1",
+pool_size: 5
 
-  config :hermes_activity_receiver, Splunk,
-  host: 'mailfeed.makeusmobile.com',
-  port: 9998,
-  opts: [:binary, active: false]
+config :hermes_activity_receiver, Splunk,
+host: 'mailfeed.makeusmobile.com',
+port: 9998,
+opts: [:binary, active: false]
