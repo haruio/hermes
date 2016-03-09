@@ -20,7 +20,7 @@ defmodule HActivity.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {HActivity, []},
-     applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext, :poolboy
+     applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext, :poolboy,
                     :phoenix_ecto, :mariaex, :poison]]
   end
 
