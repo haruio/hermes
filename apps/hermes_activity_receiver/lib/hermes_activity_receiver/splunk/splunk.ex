@@ -1,10 +1,10 @@
 defmodule Splunk do
   use Connection
 
-  @default_timeout 5000
+  @default_timeout 100
 
   defmodule State do
-    defstruct host: nil, port: nil, opts: [], timeout: nil , socket: nil
+    defstruct host: nil, port: nil, opts: [], timeout: nil , socket: nil, queue: :queue.new
   end
 
   # Public API
@@ -31,17 +31,19 @@ defmodule Splunk do
   end
 
   def connect(_info, state = %Splunk.State{host: host, port: port, opts: opts, timeout: timeout}) do
+    IO.puts "Try Connection queue: #{inspect state.queue}"
     case :gen_tcp.connect(host, port, opts) do
       {:ok, socket} ->
         IO.puts "Splunk TCP Connection success: #{inspect socket}"
         {:ok, %Splunk.State{state | socket: socket}}
       {:error, reason} ->
         IO.puts "Splunk TCP Connection error: #{inspect reason}"
-        {:backoff, 1000, state}
+        {:backoff, timeout, state}
     end
   end
 
   def disconnect(info, %Splunk.State{socket: socket} = state) do
+    IO.puts "Disconnect!!"
     :ok = :gen_tcp.close(socket)
     case info do
       {:close, from} ->
@@ -58,9 +60,20 @@ defmodule Splunk do
 
   def handle_call({:send, data}, _, %Splunk.State{socket: socket} = state) do
     case :gen_tcp.send(socket, data) do
-      :ok -> {:reply, :ok, state}
+      :ok ->
+        {:reply, :ok, state}
       {:error, _} = error ->
-        {:disconnect, error, error, state}
+        IO.puts "Send Error"
+        {:disconnect, error, error, %Splunk.State{state | queue: :queue.in(data, state.queue)}}
     end
+  end
+
+  def handle_cast(:flush_queue, %Splunk.State{socket: socket, queue: queue} = state) do
+    merge_data = :queue.to_list(queue)
+    |> Enum.reduce("", fn(data, acc) -> data <> "\u000A" <> acc end)
+
+    Splunk.send(self, merge_data)
+
+    {:noreply, %Splunk.State{state | queue: :queue.new}}
   end
 end
