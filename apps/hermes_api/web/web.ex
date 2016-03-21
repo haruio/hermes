@@ -36,6 +36,7 @@ defmodule HApi.Web do
 
       import HApi.Router.Helpers
       import HApi.Gettext
+      import HApi.ResponseHelpers
     end
   end
 

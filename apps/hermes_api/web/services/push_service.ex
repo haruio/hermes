@@ -87,12 +87,15 @@ defmodule HApi.PushService do
 
 
   def send_token(service, param) do
-    push = PushQuery.select_one_by_push_id(param["pushId"])
-    cond do
-      Map.get(push, :push_status) == PushStatus.cd_reserved ->
-        send_token(:reserve, service, param, push)
-      true ->
-        send_token(:immediate, service, param, push)
+    case PushQuery.select_one_by_push_id(param["pushId"]) do
+      nil -> {:error, "Invalid push id"}
+      push ->
+        cond do
+          Map.get(push, :push_status) == PushStatus.cd_reserved ->
+            send_token(:reserve, service, param, push)
+          true ->
+            send_token(:immediate, service, param, push)
+        end
     end
   end
 
@@ -123,54 +126,56 @@ defmodule HApi.PushService do
 
   def cancel_reserved(service, param) do
     push_id = Map.get(param, "id")
-    push = PushQuery.select_one_by_push_id(push_id)
 
-    if push.push_status == PushStatus.cd_reserved do
-      changeset = Push.changeset(push, %{push_status: PushStatus.cd_canceling})
-      case PushQuery.update(changeset) do
-        {:ok, _} ->
-          PushProducer.cancel_reserved(push_id)
-          send_ok
-        {:error, _} -> send_error
-      end
-    else
-      send_error(%{"message" => "Invalid push status"})
+    case PushQuery.select_one_by_push_id(push_id) do
+      nil -> {:error, "Invalid push id"}
+      push ->
+        if push.push_status == PushStatus.cd_reserved do
+          changeset = Push.changeset(push, %{push_status: PushStatus.cd_canceling})
+          case PushQuery.update(changeset) do
+            {:ok, _} -> PushProducer.cancel_reserved(push_id)
+            {:error, _} = error-> error
+          end
+        else
+          {:error, "Invalid push status"}
+        end
     end
   end
 
   def send_immediate(service, param) do
     push_id = Map.get(param, "id")
-    push = PushQuery.select_one_by_push_id(push_id)
 
-    if push.push_status == PushStatus.cd_reserved do
-      now = Ecto.DateTime.utc
-      changeset = Push.changeset(push, %{publish_dt: now, publish_start_dt: now})
-      case PushQuery.update(changeset) do
-        {:ok, _} ->
-          PushProducer.cancel_reserved(push_id)
-          send_ok
-        {:error, _} -> send_error
-      end
-    else
-      send_error(%{"message" => "Invalid push status"})
+    case PushQuery.select_one_by_push_id(push_id) do
+      nil -> {:error, "Invalid push id"}
+      push ->
+        if push.push_status == PushStatus.cd_reserved do
+          now = Ecto.DateTime.utc
+          changeset = Push.changeset(push, %{publish_dt: now, publish_start_dt: now})
+          case PushQuery.update(changeset) do
+            {:ok, _} -> PushProducer.cancel_reserved(push_id)
+            {:error, _} = error -> error
+          end
+        else
+          {:error, "Invalid push status"}
+        end
     end
   end
 
   def update_reserved(service, param) do
     push_id = Map.get(param, "id")
-    push = PushQuery.select_one_by_push_id(push_id)
 
-    cond do
-      push == nil -> send_error(%{"message" => "Invalid push id"})
-      push.push_status == PushStatus.cd_reserved ->
-        model = via_push_model({:update, param})
-        |> Map.take ["publish_dt", "title", "body", "extra"]
+    case PushQuery.select_one_by_push_id(push_id) do
+      nil -> {:error, "Invalid push id"}
+      push ->
+        cond do
+          push.push_status == PushStatus.cd_reserved ->
+            model = via_push_model({:update, param})
+            |> Map.take ["publish_dt", "title", "body", "extra"]
 
-        Push.changeset(push, model)
-        |> PushQuery.update
-
-        send_ok
-      true -> send_error(%{"message" => "Invalid push status"})
+            Push.changeset(push, model)
+            |> PushQuery.update
+          true -> {:error, "Invalid push status"}
+        end
     end
   end
 
@@ -180,8 +185,10 @@ defmodule HApi.PushService do
   end
 
   def get_push(service, param = %{"id" => id}) do
-    PushQuery.select_one([push_id: id])
-    |> via_push_dto
+    case PushQuery.select_one([push_id: id]) do
+      nil -> {:error, "Invalid push id"}
+      model -> via_push_dto(model)
+    end
   end
 
   ## Private method
