@@ -3,7 +3,7 @@ defmodule HPush.Provider.GCMProvider do
   alias HPush.Model.PushStats.Query, as: PushStatsQuery
   alias HPush.Model.PushStats, as: PushStats
 
-  @default_feedback "http://52.76.122.168:9090"
+  @default_feedback Application.get_env(:hermes_push, :feedback, "http://52.76.122.168:9090")
 
   def pool_name , do: GCMProviderPool
 
