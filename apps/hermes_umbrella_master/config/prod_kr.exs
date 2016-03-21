@@ -82,7 +82,7 @@ default_overlap: false
 
 ## activity log
 config :hermes_activity_receiver, HActivity.Endpoint,
-http: [port: 3000],
+http: [port: 8000],
 debug_errors: false,
 code_reloader: false,
 cache_static_lookup: false,
