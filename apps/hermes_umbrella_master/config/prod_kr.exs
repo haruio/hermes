@@ -1,15 +1,5 @@
 use Mix.Config
 
-config :hermes_api, HApi.Endpoint,
-live_reload: [
-  patterns: [
-    ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
-    ~r{priv/gettext/.*(po)$},
-    ~r{web/views/.*(ex)$},
-    ~r{web/templates/.*(eex)$}
-  ]
-]
-
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
@@ -37,23 +27,33 @@ config :phoenix, :stacktrace_depth, 20
 # Configure your database
 config :hermes_api, HApi.Repo,
 adapter: Ecto.Adapters.MySQL,
-username: "root",
-password: "foretouch919293",
+username: "makeus_hermes",
+password: "apdlzjtm20!%gpfmaptm",
 database: "mks_hermes",
-hostname: "127.0.0.1",
+port: 16603,
+hostname: "10.10.1.5",
 pool_size: 5
 
 config :hermes_push, HPush.Repo,
 adapter: Ecto.Adapters.MySQL,
-username: "root",
-password: "foretouch919293",
+username: "makeus_hermes",
+password: "apdlzjtm20!%gpfmaptm",
 database: "mks_hermes",
-hostname: "127.0.0.1",
+port: 16603,
+hostname: "10.10.1.5",
+pool_size: 5
+
+config :hermes_scheduler, HScheduler.Repo,
+adapter: Ecto.Adapters.MySQL,
+username: "makeus_hermes",
+password: "apdlzjtm20!%gpfmaptm",
+database: "mks_hermes",
+port: 16603,
+hostname: "10.10.1.5",
 pool_size: 5
 
 config :hermes_api, Producer.PushProducer,
 adapter: Producer.Router.LocalPushRouter
-
 
 config :apns,
 callback_module:    APNS.Callback,
@@ -62,7 +62,6 @@ feedback_interval:  1200,
 reconnect_after:    1000,
 support_old_ios:    true,
 pools: [ ]
-
 
 config :hermes_push, HPush.Provider.GCMProvider,
 feedback: "http://52.76.122.168:9090"
@@ -73,14 +72,6 @@ feedback: "http://52.76.122.168:9090"
 config :hermes_push, HPush.Dispatcher,
 apn: HPush.Provider.APNSProvider,
 gcm: HPush.Provider.GCMProvider
-
-config :hermes_scheduler, HScheduler.Repo,
-adapter: Ecto.Adapters.MySQL,
-username: "root",
-password: "foretouch919293",
-database: "mks_hermes",
-hostname: "127.0.0.1",
-pool_size: 5
 
 config :hermes_scheduler, HScheduler.Store.PushTokenStore,
 adapter: HScheduler.Store.ETSAdapter,

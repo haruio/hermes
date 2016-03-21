@@ -8,11 +8,12 @@ use Mix.Config
 # with brunch.io to recompile .js and .css sources.
 config :hermes_api, HApi.Endpoint,
   http: [port: 2000],
-  debug_errors: true,
+  debug_errors: false,
   code_reloader: true,
   cache_static_lookup: false,
   check_origin: false,
-  watchers: []
+  watchers: [],
+  render_errors: [default_format: "json"]
 
 # Watch static and templates for browser reloading.
 config :hermes_api, HApi.Endpoint,

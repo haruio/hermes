@@ -1,17 +1,23 @@
 defmodule HApi.ErrorView do
   use HApi.Web, :view
 
-  def render("404.html", _assigns) do
-    "Page not found"
+  def render(<<status::binary-3>> <> ".json", assigns) do
+    assigns
+    |> Map.take([:message, :errors])
+    |> Map.put(:status, String.to_integer(status))
+    |> Map.put_new(:message, message(status))
   end
 
-  def render("500.html", _assigns) do
-    "Server internal error"
+  def render(_, _assigns) do
+    %{errors: %{message: "Server Error"}}
   end
 
-  # In case no render clause matches or no
-  # template is found, let's render it as 500
-  def template_not_found(_template, assigns) do
-    render "500.html", assigns
-  end
+  defp message("400"), do: "Bad request"
+  defp message("404"), do: "Page not found"
+  defp message("408"), do: "Request timeout"
+  defp message("413"), do: "Payload too large"
+  defp message("415"), do: "Unsupported media type"
+  defp message("422"), do: "Validation error(s)"
+  defp message("500"), do: "Internal server error"
+  defp message(_),     do: nil
 end
