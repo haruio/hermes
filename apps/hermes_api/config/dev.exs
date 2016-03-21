@@ -8,11 +8,12 @@ use Mix.Config
 # with brunch.io to recompile .js and .css sources.
 config :hermes_api, HApi.Endpoint,
   http: [port: 2000],
-  debug_errors: true,
+  debug_errors: false,
   code_reloader: false,
   cache_static_lookup: false,
   check_origin: false,
   watchers: []
+  render_errors: [default_format: "json"]
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
