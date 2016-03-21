@@ -180,7 +180,7 @@ defmodule HApi.PushService do
   end
 
   def get_push_list(service, param) do
-    PushQuery.select([service_id: service.service_id], Map.take(param, ["page", "pageSize"]))
+    PushQuery.select([service_id: service.service_id], Map.take(param, ["pageNum", "pageSize"]))
     |> via_push_page_dto
   end
 
