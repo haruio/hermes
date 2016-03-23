@@ -4,6 +4,8 @@ defmodule HQueue.Queue do
   alias HQueue.QueueSup
   alias HQueue.QueueRepository
 
+  require Logger
+
   defmodule  QueueState do
     defstruct name: nil,
     queue: :queue.new,
@@ -41,11 +43,15 @@ defmodule HQueue.Queue do
   end
 
   def handle_cast({:publish, message}, state) do
+    Logger.debug "[#{inspect __MODULE__}] publish"
+
     message = build_message(message)
     {:noreply, queueing_message(message, state)}
   end
 
   def handle_call(:consume, from, state) do
+    Logger.debug "[#{inspect __MODULE__}] consume"
+
     case :queue.out(state.queue) do
       {{:value, message}, q} ->
         {:reply, message, %{state | queue: q, unacked: add_unacked(state.unacked, from, message)}}
@@ -69,11 +75,15 @@ defmodule HQueue.Queue do
   end
 
   def handle_cast({:ack, message_id}, %QueueState{ unacked: unacked } = state) do
+    Logger.debug "[#{__MODULE__}] ack"
+
     {:noreply,  %{state | unacked: Map.delete(state.unacked, message_id)}}
   end
 
   ## Private API
   defp queueing_message(message, state) do
+    Logger.debug "[#{__MODULE__}] queuing_message"
+
     case :queue.out(state.consumers) do
       {{:value, consumer}, consumers} ->
         GenServer.reply(consumer, message)
@@ -84,6 +94,8 @@ defmodule HQueue.Queue do
   end
 
   defp queueing_consumer(consumer, state) do
+    Logger.debug "[#{__MODULE__}] queuing_consumer"
+
     %{state | consumers: :queue.in(consumer, state.consumers)}
   end
 

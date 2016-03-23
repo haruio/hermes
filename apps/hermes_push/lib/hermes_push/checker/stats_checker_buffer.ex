@@ -3,11 +3,15 @@ defmodule HPush.StatsChecker.Buffer do
 
   alias HPush.Model.PushStats.Query, as: PushStatsQuery
 
+  require Logger
+
   defstart start_link(buff \\ []) do
     initial_state(buff)
   end
 
   defcast add(message), state: buff do
+    Logger.debug "[#{__MODULE__}] handle_cast add"
+
     new_state(buff ++ [message])
   end
 

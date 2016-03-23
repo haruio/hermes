@@ -3,12 +3,16 @@ defmodule HPush.Provider.GCMProvider do
   alias HPush.Model.PushStats.Query, as: PushStatsQuery
   alias HPush.Model.PushStats, as: PushStats
 
+  require Logger
+
   @default_feedback Application.get_env(:hermes_push, :feedback, "http://52.76.122.168:9090")
 
   def pool_name , do: GCMProviderPool
 
   defstart start_link(args \\ %{}), do: initial_state(args)
   defcast publish(message, tokens), state: state do
+    Logger.debug "[#{__MODULE__}] handle_cast publish"
+
     gcm_key = Map.get(message, :gcm_api_key)
     {:ok, gcm_res} = GCM.push(gcm_key, tokens, build_payload(message))
 
@@ -24,6 +28,8 @@ defmodule HPush.Provider.GCMProvider do
   end
 
   def publish(message, tokens) do
+    Logger.debug "[#{__MODULE__}] publish"
+
     :poolboy.transaction(pool_name, fn(provider) ->
       GenServer.cast(pool_name, {:publish, message, tokens})
     end)

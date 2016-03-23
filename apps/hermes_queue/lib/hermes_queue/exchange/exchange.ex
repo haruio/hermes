@@ -3,6 +3,7 @@ defmodule HQueue.Exchange do
 
   alias HQueue.ExchangeSup
 
+  require Logger
 
   @default_topic "default"
 
@@ -23,6 +24,7 @@ defmodule HQueue.Exchange do
   end
 
   defcast publish(message, topic \\ @default_topic), state: state do
+    Logger.debug "[#{inspect __MODULE__}] publish topic: #{inspect topic}"
     case Map.get(state, topic) do
       nil -> noreply
       topics ->

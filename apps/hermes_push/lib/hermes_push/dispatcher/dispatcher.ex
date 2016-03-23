@@ -1,6 +1,8 @@
 defmodule HPush.Dispatcher do
   use ExActor.GenServer
 
+  require Logger
+
   defmodule State do
     defstruct opts: nil, queue: nil
   end
@@ -23,12 +25,16 @@ defmodule HPush.Dispatcher do
   end
 
   def dispatch(job) do
+    Logger.debug "[#{__MODULE__}] dispatch"
+
     :poolboy.transaction(pool_name, fn(dispatcher) ->
       GenServer.cast(dispatcher, {:dispatch, job})
     end)
   end
 
   defcast consume, state: state do
+    Logger.debug "[#{__MODULE__}] handle_cast consume"
+
     {msg_id, message} = HQueue.Queue.consume(state.queue)
     GenServer.cast(self, {:dispatch, message})
     HQueue.Queue.ack(state.queue, msg_id)
@@ -37,6 +43,8 @@ defmodule HPush.Dispatcher do
   end
 
   defcast dispatch(job), state: state do
+    Logger.debug "[#{__MODULE__}] handle_cast dispatch"
+
     HPush.StatusCheker.check(job.push_id, length(job.push_tokens))
     message = Map.delete(job, :push_tokens)
     Map.get(job, :push_tokens)
@@ -50,6 +58,8 @@ defmodule HPush.Dispatcher do
   end
 
   def dispatch_provider(push_type, tokens, message, opts) do
+    Logger.debug "[#{__MODULE__}] dispatch_provider"
+
     tokens
     |> Stream.map(&(Map.get(&1, "pushToken")))
     |> Stream.chunk(@max_chunk, @max_chunk, [])

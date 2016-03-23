@@ -2,6 +2,8 @@ defmodule HPush.Provider.APNSProvider do
   use ExActor.GenServer
   alias HPush.Model.PushStats, as: PushStats
 
+  require Logger
+
   @default_feedback Application.get_env(:hermes_push, :feedback, "http://52.76.122.168:9090")
 
   alias HPush.Provider.APNSConnectionRepository, as: ConnRepo
@@ -9,15 +11,22 @@ defmodule HPush.Provider.APNSProvider do
   def pool_name, do: APNSProviderPool
 
   defstart start_link(args \\ %{}), do: initial_state(args)
-  def publish(message, tokens), do: :poolboy.transaction(pool_name, &(GenServer.cast(&1, {:publish, message, tokens})))
+  def publish(message, tokens) do
+    Logger.debug "[#{__MODULE__}] publish"
+
+    :poolboy.transaction(pool_name, &(GenServer.cast(&1, {:publish, message, tokens})))
+  end
+
   defcast publish(message, tokens), state: state do
+    Logger.debug "[#{__MODULE__}] handle_cast  publish"
     {:ok, pool_name} = ConnRepo.get_repository(message)
 
     payload = build_payload(message)
+    Logger.debug "[#{__MODULE__}] handle_cast  publish APNS.push"
     Enum.each(tokens, &(APNS.push(pool_name, Map.put(payload, :token, &1))))
 
     ## TODO send feedback
-
+    Logger.debug "[#{__MODULE__}] handle_cast  publish HPush.StatsChecker.add"
     HPush.StatsChecker.add(%{push_id: message[:push_id],
                             ststs_cd: PushStats.cd_published,
                             stats_cnt: length(tokens),

@@ -1,11 +1,14 @@
 defmodule HPush.Provider.APNSConnectionRepository do
   use ExActor.GenServer, export: __MODULE__
 
+  require Logger
+
   defstart start_link(args \\ %{}), do: initial_state(args)
 
   @default_apns_env :dev
 
   defcall get_repository(message), state: state do
+    Logger.debug "[#{__MODULE__}] handle_call get_repository"
     service_id = Map.get(message, :service_id)
     env = case message[:options][:apns]["env"] do
       "prod" -> :prod
