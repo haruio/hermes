@@ -16,7 +16,7 @@ defmodule HPush.Provider.APNSConnectionRepository do
     case Map.get(state, service_id, nil) do
       nil ->
         p = pool_name(service_id, env)
-        config = pool_config(Map.take(message, [:apns_cert, :apns_key, :apns_env]))
+        config = pool_config(Map.take(message, [:apns_cert, :apns_key, :apns_env]), env)
         new_state = Map.put(state, p, p)
         APNS.connect_pool(p, config)
         set_and_reply(new_state, {:ok, p})
@@ -27,7 +27,7 @@ defmodule HPush.Provider.APNSConnectionRepository do
 
 
   def pool_name(service_id, env), do: Atom.to_string(env) <> "::" <> service_id |> APNS.pool_name
-  def pool_config(message) do
+  def pool_config(message, env) do
     config = %{}
     config = case :public_key.pem_decode(Map.get(message, :apns_cert)) do
              [{:Certificate, certDer, _}] -> config |> Dict.put(:cert, certDer)
@@ -40,7 +40,7 @@ defmodule HPush.Provider.APNSConnectionRepository do
           end
 
     [
-      env: Map.get(message, :apns_env, :dev),
+      env: Map.get(message, :apns_env, env),
       pool_size: 5,
       pool_max_overflow: 5,
       cert: config.cert,
