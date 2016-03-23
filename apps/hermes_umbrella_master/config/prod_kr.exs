@@ -63,7 +63,7 @@ reconnect_after:    1000,
 support_old_ios:    true,
 pools: [ ]
 
-config :hermes_push, feedback: "http://200.90.203.114:8000/"
+config :hermes_push, feedback: "http://220.90.203.114:8000"
 
 config :hermes_push, HPush.Dispatcher,
 apn: HPush.Provider.APNSProvider,

@@ -350,9 +350,9 @@ defmodule HApi.PushService do
       case key do
         "PUB" ->
           %{acc | "published" =>  value |> Decimal.to_string |> Integer.parse |> elem(0) }
-        "OPN" ->
+        "OPED" ->
           %{acc | "opened" => value |> Decimal.to_string |> Integer.parse |> elem(0) }
-        "RCV" ->
+        "RVED" ->
           %{acc | "received" => value |> Decimal.to_string |> Integer.parse |> elem(0) }
         _ ->
       end
