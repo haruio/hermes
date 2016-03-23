@@ -34,7 +34,7 @@ defmodule HActivity.StatsChecker.Buffer do
     Task.async(fn ->
       buff
       |> Enum.reduce("", &reduce_stats_to_binary/2)
-      |> send_to_splunk
+      |> Splunk.ConnectionPool.send
     end)
   end
 
@@ -69,11 +69,4 @@ defmodule HActivity.StatsChecker.Buffer do
     build_stats(stats) <> acc
   end
 
-  defp send_to_splunk(binary) when is_binary(binary) do
-    IO.inspect binary
-    options = [:binary, active: false]
-    {:ok, socket} = :gen_tcp.connect('mailfeed.makeusmobile.com', 9998, options)
-    :ok = :gen_tcp.send(socket, binary)
-    :gen_tcp.close(socket)
-  end
 end
