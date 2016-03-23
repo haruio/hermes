@@ -339,14 +339,14 @@ defmodule HApi.PushService do
       "publishStartDt" => model.publish_start_dt |> ecto_datetime_to_timestamp,
       "publishEndDt" => model.publish_end_dt |> ecto_datetime_to_timestamp,
       "publishTime" => model.publish_end_dt |> ecto_datetime_to_timestamp,
-      "pushStats" => get_stats_summary(model.push_id)
+      "pushStats" => %{get_stats_summary(model.push_id) | "requested" => model.request_cnt}
     }
   end
 
   def get_stats_summary(push_id) do
     push_id
     |> PushStatsQuery.summary_by_push_id
-    |> Enum.reduce(%{"published" => 0, "opened" => 0, "received" => 0}, fn([key|[value]], acc) ->
+    |> Enum.reduce(%{"published" => 0, "opened" => 0, "received" => 0, "requested" => 0}, fn([key|[value]], acc) ->
       case key do
         "PUB" ->
           %{acc | "published" =>  value |> Decimal.to_string |> Integer.parse |> elem(0) }

@@ -20,8 +20,8 @@ defmodule HApi.Push do
     field :update_dt, Ecto.DateTime, default: Ecto.DateTime.utc
   end
 
-  @required_fields ~w(push_id body title push_condition extra service_id push_status)
-  @optional_fields ~w(create_user update_user publish_dt create_dt update_dt request_cnt)
+  @required_fields ~w(push_id body title push_condition extra service_id push_status request_cnt)
+  @optional_fields ~w(create_user update_user publish_dt create_dt update_dt)
 
 
   @doc """
