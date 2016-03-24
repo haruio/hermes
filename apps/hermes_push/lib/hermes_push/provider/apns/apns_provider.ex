@@ -23,7 +23,11 @@ defmodule HPush.Provider.APNSProvider do
 
     payload = build_payload(message)
     Logger.debug "[#{__MODULE__}] handle_cast  publish APNS.push"
-    Enum.each(tokens, &(APNS.push(pool_name, Map.put(payload, :token, &1))))
+    # Enum.each(tokens, &(APNS.push(pool_name, Map.put(payload, :token, &1))))
+    Enum.each(tokens, fn(token) ->
+      result = APNS.push(pool_name, Map.put(payload, :token, token))
+      Logger.debug "[#{__MODULE__}] APNS.push result = #{inspect result}"
+    end)
 
     ## TODO send feedback
     Logger.debug "[#{__MODULE__}] handle_cast  publish HPush.StatsChecker.add"
