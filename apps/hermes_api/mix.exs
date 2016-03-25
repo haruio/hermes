@@ -28,6 +28,7 @@ defmodule HApi.Mixfile do
   end
 
   def env_applications(:test), do: [:hermes_queue]
+  def env_applications(:prod_kr), do: [:hermes_queue]
   def env_applications(:local), do: [:hermes_queue]
   def env_applications(_), do: []
 
@@ -47,11 +48,11 @@ defmodule HApi.Mixfile do
      {:gettext, "~> 0.9"},
      {:timex, "~> 1.0.0-rc3"},
      {:exactor, "~> 2.2"},
-     {:exrm, "~> 1.0.0-rc7" },
-     {:conform, "~> 1.0.0-rc8"},
-     {:conform_exrm, "~> 0.2.0"},
+     {:exrm, "~> 1.0"},
+     {:conform, "~> 2.0"},
+     {:conform_exrm, "~> 1.0"},
      {:calendar, "~> 0.12.4"},
-     {:hermes_queue, in_umbrella: true, only: [:local, :test]},
+     {:hermes_queue, in_umbrella: true, only: [:local, :test, :prod_kr]},
      {:scrivener, "~> 1.1"},
      {:cowboy, "~> 1.0"}]
   end

@@ -15,8 +15,12 @@ defmodule HUmbrellaMaster.Mixfile do
 
   def application do
     [
-      applications: [:logger, :hermes_queue, :hermes_api, :hermes_push,
-                     :hermes_scheduler, :conform, :conform_exrm] ++ env_applications(Mix.env)
+      applications: [:logger,
+                     :hermes_api,
+                     :hermes_push,
+                     :hermes_scheduler,
+                     :conform,
+                     :conform_exrm] ++ env_applications(Mix.env)
     ]
   end
 
@@ -25,10 +29,9 @@ defmodule HUmbrellaMaster.Mixfile do
 
   defp deps do
     [
-      {:exrm, "~> 1.0.0-rc7" },
-      {:conform, "~> 1.0.0-rc8"},
-      {:conform_exrm, "~> 0.2.0"},
-      {:hermes_queue, in_umbrella: true},
+      {:exrm, "~> 1.0"},
+      {:conform, "~> 2.0"},
+      {:conform_exrm, "~> 1.0"},
       {:hermes_api, in_umbrella: true},
       {:hermes_push, in_umbrella: true},
       {:hermes_scheduler, in_umbrella: true},

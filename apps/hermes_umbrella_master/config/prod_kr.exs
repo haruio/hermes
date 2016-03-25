@@ -17,7 +17,10 @@ config :hermes_api, HApi.Endpoint,
   render_errors: [default_format: "json"]
 
 # Do not include metadata nor timestamps in development logs
-config :logger, :console, format: "[$level] $message\n"
+config :logger, :console,
+  format: "[$level] $message\n",
+  backends: [:console],
+  compile_time_purge_level: :info
 
 # Set a higher stacktrace during development.
 # Do not configure such in production as keeping
@@ -101,5 +104,4 @@ pool_size: 5
 
 config :hermes_activity_receiver, Splunk,
 host: '220.90.203.111',
-port: 9990,
-opts: [:binary, active: false]
+port: 9990

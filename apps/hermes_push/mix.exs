@@ -20,6 +20,7 @@ defmodule HPush.Mixfile do
 
   def env_applications(:test), do: [:hermes_queue]
   def env_applications(:local), do: [:hermes_queue]
+  def env_applications(:prod_kr), do: [:hermes_queue]
   def env_applications(_), do: []
 
   defp deps do
@@ -29,13 +30,13 @@ defmodule HPush.Mixfile do
       {:httpoison, "~> 0.8.0"},
       {:exactor, "~> 2.2"},
       {:gcm, "~> 1.1"},
-      {:apns, "~> 0.0.11"},
+      {:apns, "~> 0.0.12"},
       {:ecto, "~> 1.1"},
       {:mariaex, "~> 0.6.2"},
-      {:exrm, "~> 1.0.0-rc7" },
-      {:conform, "~> 1.0.0-rc8"},
-      {:conform_exrm, "~> 0.2.0"},
-      {:hermes_queue, in_umbrella: true, only: [:local, :test]}
+      {:exrm, "~> 1.0"},
+      {:conform, "~> 2.0"},
+      {:conform_exrm, "~> 1.0"},
+      {:hermes_queue, in_umbrella: true, only: [:local, :test, :prod_kr]}
     ]
   end
 end

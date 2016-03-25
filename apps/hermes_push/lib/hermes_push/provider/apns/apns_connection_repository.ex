@@ -31,16 +31,22 @@ defmodule HPush.Provider.APNSConnectionRepository do
 
   def pool_name(service_id, env), do: Atom.to_string(env) <> "::" <> service_id |> APNS.pool_name
   def pool_config(message, env) do
-    config = %{}
-    config = case :public_key.pem_decode(Map.get(message, :apns_cert)) do
-             [{:Certificate, certDer, _}] -> config |> Dict.put(:cert, certDer)
-             _ -> config
-           end
+    config = %{
+      cert: Map.get(message, :apns_cert),
+      key: Map.get(message, :apns_key)
+    }
 
-    config = case :public_key.pem_decode(Map.get(message, :apns_key)) do
-            [{:RSAPrivateKey, keyDer, _}] -> config |> Dict.put(:key, { :RSAPrivateKey, keyDer})
-            _ -> config
-          end
+
+    # APNS4EX 0.12 버전부터 plain text 로 변경.
+    # config = case :public_key.pem_decode(Map.get(message, :apns_cert)) do
+    #          [{:Certificate, certDer, _}] -> config |> Dict.put(:cert, certDer)
+    #          _ -> config
+    #        end
+
+    # config = case :public_key.pem_decode(Map.get(message, :apns_key)) do
+    #         [{:RSAPrivateKey, keyDer, _}] -> config |> Dict.put(:key, { :RSAPrivateKey, keyDer})
+    #         _ -> config
+    #       end
 
     [
       env: Map.get(message, :apns_env, env),

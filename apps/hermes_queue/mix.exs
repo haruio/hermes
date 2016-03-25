@@ -39,9 +39,9 @@ defmodule HQueue.Mixfile do
       {:poolboy, "~> 1.5"},
       {:exactor, "~> 2.2"},
       {:uuid, "~> 1.1"},
-      {:exrm, "~> 1.0.0-rc7" },
-      {:conform, "~> 1.0.0-rc8"},
-      {:conform_exrm, "~> 0.2.0"}
+      {:exrm, "~> 1.0"},
+      {:conform, "~> 2.0"},
+      {:conform_exrm, "~> 1.0"}
     ]
   end
 end

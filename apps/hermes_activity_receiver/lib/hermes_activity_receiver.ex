@@ -4,7 +4,7 @@ defmodule HActivity do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
-    splunk_env = Application.get_env(:hermes_activity_receiver, Splunk)
+    splunk_env = Application.get_env(:hermes_activity_receiver, Splunk, [:binary, active: false])
 
     children = [
       supervisor(HActivity.Endpoint, []),
