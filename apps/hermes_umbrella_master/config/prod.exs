@@ -100,5 +100,5 @@ hostname: "internal-dingo-db-proxy-internal-elb-1863601966.ap-southeast-1.elb.am
 pool_size: 5
 
 config :hermes_activity_receiver, Splunk,
-host: '52.76.122.168',
+host: '10.0.16.13',
 port: 9998
