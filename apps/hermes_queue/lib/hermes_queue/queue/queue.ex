@@ -39,6 +39,8 @@ defmodule HQueue.Queue do
 
   ## Callback API
   def init(state) do
+    Logger.info "[#{__MODULE__}] start Queue"
+
     {:ok, state}
   end
 

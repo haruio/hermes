@@ -20,6 +20,7 @@ defmodule HPush.Provider.APNSProvider do
   defcast publish(message, tokens), state: state do
     Logger.debug "[#{__MODULE__}] handle_cast  publish"
     {:ok, pool_name} = ConnRepo.get_repository(message)
+    Logger.debug "[#{__MODULE__}] get_repository = #{pool_name}"
 
     payload = build_payload(message)
     Logger.debug "[#{__MODULE__}] handle_cast  publish APNS.push"

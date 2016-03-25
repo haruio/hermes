@@ -3,8 +3,18 @@ defmodule HQueue.QueueRepository do
 
   alias HQueue.Queue
 
-  defstart start_link, do: initial_state(%{})
-  defstart start_link(state), do: initial_state(state)
+  require Logger
+
+  defstart start_link do
+    Logger.info "[#{__MODULE__}] QueueRepository start"
+    initial_state(%{})
+  end
+
+  defstart start_link(state) do
+    Logger.info "[#{__MODULE__}] QueueRepository start by #{inspect state}"
+    initial_state(state)
+  end
+
 
   defcall get(name), state: state do
     reply Map.fetch(state, name)
