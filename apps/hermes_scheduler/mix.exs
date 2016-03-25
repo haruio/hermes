@@ -26,6 +26,7 @@ defmodule HScheduler.Mixfile do
   def env_applications(:test), do: [:hermes_queue]
   def env_applications(:local), do: [:hermes_queue]
   def env_applications(:prod_kr), do: [:hermes_queue]
+  def env_applications(:prod), do: [:hermes_queue]
   def env_applications(_), do: []
 
   # Dependencies can be Hex packages:
@@ -49,7 +50,7 @@ defmodule HScheduler.Mixfile do
       {:mariaex, "~> 0.6.2"},
       {:exactor, "~> 2.2"},
       {:poolboy, "~> 1.5"},
-      {:hermes_queue, in_umbrella: true, only: [:local, :test, :prod_kr]},
+      {:hermes_queue, in_umbrella: true, only: [:local, :test, :prod_kr, :prod]},
       {:exrm, "~> 1.0"},
       {:conform, "~> 2.0"},
       {:conform_exrm, "~> 1.0"}

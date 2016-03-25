@@ -25,6 +25,7 @@ defmodule HUmbrellaMaster.Mixfile do
   end
 
   def env_applications(:prod_kr), do: [:hermes_activity_receiver]
+  def env_applications(:prod), do: [:hermes_activity_receiver]
   def env_applications(_), do: []
 
   defp deps do
@@ -35,7 +36,7 @@ defmodule HUmbrellaMaster.Mixfile do
       {:hermes_api, in_umbrella: true},
       {:hermes_push, in_umbrella: true},
       {:hermes_scheduler, in_umbrella: true},
-      {:hermes_activity_receiver, in_umbrella: true, only: [:prod_kr]}
+      {:hermes_activity_receiver, in_umbrella: true, only: [:prod_kr, :prod]}
     ]
   end
 end

@@ -63,11 +63,7 @@ reconnect_after:    1000,
 support_old_ios:    true,
 pools: [ ]
 
-config :hermes_push, HPush.Provider.GCMProvider,
-feedback: "http://52.76.122.168:9090"
-
-config :hermes_push, HPush.Provider.APNSProvider,
-feedback: "http://52.76.122.168:9090"
+config :hermes_push, feedback: "http://52.74.168.1:8000"
 
 config :hermes_push, HPush.Dispatcher,
 apn: HPush.Provider.APNSProvider,
@@ -83,3 +79,26 @@ config :quantum, cron: [
   "*/3 * * * * HScheduler.Job.CancelReservedPush.do_job",
 ],
 default_overlap: false
+
+## activity log
+config :hermes_activity_receiver, HActivity.Endpoint,
+http: [port: 8000],
+debug_errors: false,
+code_reloader: false,
+cache_static_lookup: false,
+check_origin: false,
+server: true,
+watchers: []
+
+config :hermes_activity_receiver, HActivity.Repo,
+adapter: Ecto.Adapters.MySQL,
+username: "makeus_hermes",
+password: "apdlzjtm20!%gpfmaptm",
+database: "mks_hermes",
+port: 16603,
+hostname: "internal-dingo-db-proxy-internal-elb-1863601966.ap-southeast-1.elb.amazonaws.com",
+pool_size: 5
+
+config :hermes_activity_receiver, Splunk,
+host: '52.76.122.168',
+port: 9998
