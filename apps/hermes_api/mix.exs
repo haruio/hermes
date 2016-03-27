@@ -52,7 +52,7 @@ defmodule HApi.Mixfile do
      {:exrm, "~> 1.0"},
      {:conform, "~> 2.0"},
      {:conform_exrm, "~> 1.0"},
-     {:calendar, "~> 0.12.4"},
+     {:calendar, "~> 0.13.2"},
      {:hermes_queue, in_umbrella: true, only: [:local, :test, :prod_kr, :prod]},
      {:scrivener, "~> 1.1"},
      {:cowboy, "~> 1.0"}]
