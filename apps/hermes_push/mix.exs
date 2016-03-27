@@ -13,7 +13,7 @@ defmodule HPush.Mixfile do
   end
 
   def application do
-    [applications: [:logger, :gcm, :apns,
+    [applications: [:logger, :gcm, :apns, :calendar,
                     :poolboy, :poison, :httpoison, :exactor, :ecto, :mariaex] ++ env_applications(Mix.env),
      mod: {HPush, []}]
   end
@@ -31,12 +31,14 @@ defmodule HPush.Mixfile do
       {:httpoison, "~> 0.8.0"},
       {:exactor, "~> 2.2"},
       {:gcm, "~> 1.1"},
-      {:apns, "~> 0.0.12"},
+      # {:apns, "~> 0.0.12"},
+      {:apns, git: "https://github.com/syntaxfish/apns4ex", branch: "develop"},
       {:ecto, "~> 1.1"},
       {:mariaex, "~> 0.6.2"},
       {:exrm, "~> 1.0"},
       {:conform, "~> 2.0"},
       {:conform_exrm, "~> 1.0"},
+      {:calendar, "~> 0.13.2"},
       {:hermes_queue, in_umbrella: true, only: [:local, :test, :prod_kr, :prod]}
     ]
   end

@@ -1,6 +1,8 @@
 defmodule Splunk do
   use Connection
 
+  require Logger
+
   @default_timeout 100
 
   defmodule State do
@@ -9,7 +11,7 @@ defmodule Splunk do
 
   # Public API
   def start_link(nil) do
-    IO.puts "Splunk Config Error"
+    Logger.error "[#{__MODULE__}] Splunk config error"
   end
 
   def start_link(host, port, opts, timeout \\ 5000) do
@@ -31,28 +33,26 @@ defmodule Splunk do
   end
 
   def connect(_info, state = %Splunk.State{host: host, port: port, opts: opts, timeout: timeout}) do
-    IO.puts "Try Connection queue: #{inspect state.queue}"
     case :gen_tcp.connect(host, port, opts) do
       {:ok, socket} ->
-        IO.puts "Splunk TCP Connection success: #{inspect socket}"
+        Logger.info "[#{__MODULE__}] Splunk TCP Connection success: #{inspect socket}"
         {:ok, %Splunk.State{state | socket: socket}}
       {:error, reason} ->
-        IO.puts "Splunk TCP Connection error: #{inspect reason}"
+        Logger.error "[#{__MODULE__}] TCP Connection Error: #{inspect reason}"
         {:backoff, timeout, state}
     end
   end
 
   def disconnect(info, %Splunk.State{socket: socket} = state) do
-    IO.puts "Disconnect!!"
     :ok = :gen_tcp.close(socket)
     case info do
       {:close, from} ->
         Connection.reply(from, :ok)
       {:error, :closed} ->
-        IO.puts "Splunk TCP Connection closed"
+        Logger.error "[#{__MODULE__}] TCP Connection closed"
       {:error, reason} ->
         reason = :inet.format_error(reason)
-        IO.puts "Splunk TCP error #{inspect reason}"
+        Logger.error "[#{__MODULE__}] TCP Connection Error: #{inspect reason}"
     end
 
     {:connect, :reconnect, %Splunk.State{state | socket: nil}}
@@ -63,7 +63,7 @@ defmodule Splunk do
       :ok ->
         {:reply, :ok, state}
       {:error, _} = error ->
-        IO.puts "Send Error"
+        Logger.error "[#{__MODULE__}] Send error"
         {:disconnect, error, error, %Splunk.State{state | queue: :queue.in(data, state.queue)}}
     end
   end
