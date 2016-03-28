@@ -12,12 +12,11 @@ defmodule HPush.StatusCheker do
     |> Map.take([:push_id, :request_cnt])
     |> Map.get_and_update!(:request_cnt, fn(current) -> {current, current-len_token} end)
 
-    if push[:request_cnt] == 0 do
+    if push[:request_cnt] <=  0 do
       PushQuery.update([push_id: push_id], push_status: "PUED", publish_end_dt: Ecto.DateTime.utc)
-
-      state |> Map.delete(push_id)
+      Map.delete(state, push_id)
     else
-      state |> Map.put(push_id, push)
+      Map.put(state, push_id, push)
     end
     |> new_state
 
