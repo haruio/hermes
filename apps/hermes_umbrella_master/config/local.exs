@@ -27,7 +27,9 @@ config :hermes_api, HApi.Endpoint,
   render_errors: [default_format: "json"]
 
 # Do not include metadata nor timestamps in development logs
-config :logger, :console, format: "[$level] $message\n"
+  config :logger, :console,
+  format: "[$level] $message\n",
+  compile_time_purge_level: :info
 
 # Set a higher stacktrace during development.
 # Do not configure such in production as keeping
@@ -63,12 +65,13 @@ reconnect_after:    1000,
 support_old_ios:    true,
 pools: [ ]
 
+# activity log url
+config :hermes_push, feedback: "http://52.74.168.1:8000"
 
-config :hermes_push, HPush.Provider.GCMProvider,
-feedback: "http://52.76.122.168:9090"
-
-config :hermes_push, HPush.Provider.APNSProvider,
-feedback: "http://52.76.122.168:9090"
+# feedback url
+config :hermes_push, HPush.Feedback,
+delete: "http://localhost:8000/v1/admin/pushtoken/delete",
+update: "http://localhost:8000/v1/admin/pushtoken/update"
 
 config :hermes_push, HPush.Dispatcher,
 apn: HPush.Provider.APNSProvider,

@@ -11,7 +11,8 @@ defmodule HPush do
       worker(HPush.Repo, []),
       supervisor(HPush.Provider.ProviderSup, []),
       supervisor(HPush.DispatcherSup, []),
-      supervisor(HPush.CheckerSup, [])
+      supervisor(HPush.CheckerSup, []),
+      supervisor(HPush.FeedbackSup, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

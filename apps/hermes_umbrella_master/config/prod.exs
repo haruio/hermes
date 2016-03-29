@@ -63,7 +63,14 @@ reconnect_after:    1000,
 support_old_ios:    true,
 pools: [ ]
 
+# activity log url
 config :hermes_push, feedback: "http://52.74.168.1:8000"
+
+# feedback url
+config :hermes_push, HPush.Feedback,
+delete: "http://0-id-api.dingo.tv/v1/admin/pushtoken",
+update: "http://0-id-api.dingo.tv/v1/admin/pushtoken"
+
 
 config :hermes_push, HPush.Dispatcher,
 apn: HPush.Provider.APNSProvider,

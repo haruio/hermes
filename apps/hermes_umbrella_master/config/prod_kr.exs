@@ -20,7 +20,9 @@ config :hermes_api, HApi.Endpoint,
 config :logger, :console,
   format: "[$level] $message\n",
   backends: [:console],
-  compile_time_purge_level: :info
+  handle_sasl_reports: true,
+  handle_otp_reports: true,
+  compile_time_purge_level: :error
 
 # Set a higher stacktrace during development.
 # Do not configure such in production as keeping
@@ -66,7 +68,13 @@ reconnect_after:    1000,
 support_old_ios:    true,
 pools: [ ]
 
+# activity log url
 config :hermes_push, feedback: "http://220.90.203.114:8000"
+
+# feedback url
+config :hermes_push, HPush.Feedback,
+delete: "http://0-kr-api.dingo.tv/dingo/v1/admin/pushtoken",
+update: "http://0-kr-api.dingo.tv/dingo/v1/admin/pushtoken"
 
 config :hermes_push, HPush.Dispatcher,
 apn: HPush.Provider.APNSProvider,

@@ -12,17 +12,18 @@ defmodule HPush.Provider.GCMProvider do
   defstart start_link(args \\ %{}), do: initial_state(args)
   defcast publish(message, tokens), state: state do
     Logger.debug "[#{__MODULE__}] handle_cast publish"
-
     gcm_key = Map.get(message, :gcm_api_key)
-    {:ok, gcm_res} = GCM.push(gcm_key, tokens, build_payload(message))
-
-    ## TODO send feedback
-
-    HPush.StatsChecker.add(%{push_id: message[:push_id],
-                            ststs_cd: PushStats.cd_published,
-                            stats_cnt: length(tokens),
-                            stats_start_dt: Ecto.DateTime.utc,
-                            stats_end_dt: Ecto.DateTime.utc})
+    case GCM.push(gcm_key, tokens, build_payload(message)) do
+      {:ok, gcm_res} ->
+        HPush.FeedbackMan.feedback(:gcm, gcm_res, tokens)
+        HPush.StatsChecker.add(%{push_id: message[:push_id],
+                                 ststs_cd: PushStats.cd_published,
+                                 stats_cnt: length(tokens),
+                                 stats_start_dt: Ecto.DateTime.utc,
+                                 stats_end_dt: Ecto.DateTime.utc})
+      {:error, _} ->
+        HPush.Provider.GCMProvider.publish(message, tokens) ## TODO add retry count
+    end
 
     noreply
   end
