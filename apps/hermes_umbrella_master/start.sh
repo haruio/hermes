@@ -1,1 +1,0 @@
-rel/hermes_umbrella_master/bin/hermes_umbrella_master console
