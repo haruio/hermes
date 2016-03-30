@@ -7,8 +7,8 @@ defmodule HQueue.QueueRootSup do
 
   def init(args) do
     children = [
-      supervisor(HQueue.QueueSup, []),
-      worker(HQueue.QueueRepository, [])
+      worker(HQueue.QueueRepository, []),
+      worker(HQueue.QueueStateRepository, [])
     ]
 
     supervise(children, strategy: :one_for_one)
