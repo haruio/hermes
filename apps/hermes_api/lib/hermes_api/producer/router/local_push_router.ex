@@ -7,16 +7,12 @@ defmodule Producer.Router.LocalPushRouter do
 
   def new do
     Logger.info "[#{__MODULE__}] new"
-
-    {:ok, exchange} = HQueue.Exchange.new
     {:ok, queue} = HQueue.Queue.declare(@queue_name)
-    HQueue.Exchange.bind(exchange, queue)
-
-    {:ok, exchange}
+    {:ok, queue}
   end
 
-  def publish_immediate(exchange, message) do
-    HQueue.Exchange.publish(exchange, message)
+  def publish_immediate(queue, message) do
+    HQueue.Queue.publish(queue, message)
   end
 
   def publish_reserve({:reserve, %{push_id: push_id, push_tokens: push_tokens}}) do
