@@ -7,9 +7,6 @@ defmodule HQueue do
     import Supervisor.Spec, warn: false
 
     children = [
-      # Define workers and child supervisors to be supervised
-      # worker(HQueue.Worker, [arg1, arg2, arg3]),
-      supervisor(HQueue.ExchangeSup, []),
       supervisor(HQueue.QueueRootSup, [])
     ]
 
