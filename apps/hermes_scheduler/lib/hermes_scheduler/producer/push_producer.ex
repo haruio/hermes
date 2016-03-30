@@ -16,12 +16,12 @@ defmodule HScheduler.Producer.PushProducer do
   end
 
   def init(args) do
-    {:ok, exchange} = HQueue.Exchange.new
     {:ok, queue} = HQueue.Queue.declare(@queue_name)
-    HQueue.Exchange.bind(exchange, queue)
+
+    Process.monitor(queue)
 
     state = %{
-      exchange: exchange
+      queue: queue
     }
 
     {:ok, state}
@@ -66,7 +66,7 @@ defmodule HScheduler.Producer.PushProducer do
     Task.async(fn ->
       ## publish message
       message = build_message(push, service, options, tokens)
-      HQueue.Exchange.publish(state.exchange, message)
+      HQueue.Queue.publish(state.queue, message)
     end)
   end
 
