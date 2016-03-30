@@ -19,7 +19,10 @@ defmodule HPush.Dispatcher do
       queue: queue
     }
 
+    Process.monitor(queue)
+
     GenServer.cast(self, :consume)
+
 
     initial_state(state)
   end
@@ -35,10 +38,13 @@ defmodule HPush.Dispatcher do
   defcast consume, state: state do
     Logger.debug "[#{__MODULE__}] handle_cast consume"
 
-    {msg_id, message} = HQueue.Queue.consume(state.queue)
-    GenServer.cast(self, {:dispatch, message})
-    HQueue.Queue.ack(state.queue, msg_id)
-    GenServer.cast(self, :consume)
+    if Process.alive?(state.queue) do
+      {msg_id, message} = HQueue.Queue.consume(state.queue)
+      GenServer.cast(self, {:dispatch, message})
+      HQueue.Queue.ack(state.queue, msg_id)
+      GenServer.cast(self, :consume)
+    end
+
     noreply
   end
 
@@ -55,6 +61,20 @@ defmodule HPush.Dispatcher do
     end)
 
     noreply
+  end
+
+
+  def handle_info({:DOWN, ref, :process, pid, :noproc}, state) do
+    if state.queue == pid do
+      Logger.debug "[#{__MODULE__}] new queue"
+      Process.demonitor(ref)
+      {:ok, queue} = HQueue.Queue.declare(@queue_name)
+      Process.monitor(queue)
+      GenServer.cast(self, :consume)
+      {:noreply, %State{state | queue: queue}}
+    else
+      {:noreply, state}
+    end
   end
 
   def dispatch_provider(push_type, tokens, message, opts) do
@@ -83,5 +103,4 @@ defmodule HPush.Dispatcher do
       :error -> :error
     end
   end
-
 end
