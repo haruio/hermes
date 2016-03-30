@@ -73,7 +73,6 @@ defmodule HPush.Feedback do
     case @feedback_config[verb] do
       nil -> {:error, "Invalid verb"}
       url ->
-        IO.puts "[#{__MODULE__}] #{inspect verb} -> #{inspect tokens}"
         Task.async(fn ->
           HTTPoison.post!(@feedback_config[:delete], tokens |> Poison.encode!, @feedback_headers)
         end)
