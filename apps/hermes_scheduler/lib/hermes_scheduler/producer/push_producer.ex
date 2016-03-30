@@ -44,6 +44,17 @@ defmodule HScheduler.Producer.PushProducer do
     {:reply, state, state}
   end
 
+  def handle_info({:DOWN, ref, :process, pid, _reason}, state) do
+    if state.queue == pid do
+      {:ok, queue} = HQueue.Queue.declare(@queue_name)
+      Process.monitor(queue)
+      Process.demonitor(ref)
+      {:noreply, %{state | queue: queue}}
+    else
+      {:noreply, state}
+    end
+  end
+
   def publish_loop(push, service, state) do
     case PushTokenStore.select_all(push.push_id) do
       nil -> :ok
