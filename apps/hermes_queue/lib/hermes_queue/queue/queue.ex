@@ -82,11 +82,19 @@ defmodule HQueue.Queue do
     {:noreply,  %{state | unacked: Map.delete(state.unacked, message_id)}}
   end
 
+  def handle_info(msg, state) do
+    {:noreply, state}
+  end
+
+  def terminate(_reason, state) do
+    HQueue.QueueStateRepository.insert(state)
+  end
+
   ## Private API
   defp queueing_message(message, state) do
     Logger.debug "[#{__MODULE__}] queuing_message"
 
-    case :queue.out(state.consumers) do
+    case get_alive_consumer(state.consumers) do
       {{:value, consumer}, consumers} ->
         GenServer.reply(consumer, message)
         %{state | consumers: consumers, unacked: add_unacked(state.unacked, consumer, message)}
@@ -95,7 +103,21 @@ defmodule HQueue.Queue do
     end
   end
 
-  defp queueing_consumer(consumer, state) do
+  defp get_alive_consumer(queue) do
+    case :queue.out(queue) do
+      {{:value, {pid, _ref}=consumer}, consumers} ->
+        if Process.alive?(pid) do
+          {{:value, consumer}, consumers}
+        else
+          get_alive_consumer(consumers)
+        end
+      {:empty, q} ->
+        {:empty, q}
+    end
+  end
+
+
+  defp queueing_consumer({pid, ref} = consumer, state) do
     Logger.debug "[#{__MODULE__}] queuing_consumer"
 
     %{state | consumers: :queue.in(consumer, state.consumers)}
@@ -113,7 +135,10 @@ defmodule HQueue.Queue do
 
   ## Public API
   def declare(name), do: QueueRepository.declare(name)
-  def new(name) when is_binary(name), do: Supervisor.start_child(QueueSup, [%QueueState{name: name}])
-  def new(args \\ %QueueState{}), do: Supervisor.start_child(QueueSup, [args])
+  # def new(name) when is_binary(name), do: Supervisor.start_child(QueueSup, [%QueueState{name: name}])
+  # def new(args \\ %QueueState{}), do: Supervisor.start_child(QueueSup, [args])
+  def new(name) when is_binary(name), do: HQueue.Queue.start_link(%QueueState{name: name})
+  def new(args \\ %QueueState{}), do: HQueue.Queue.start_link(args)
+
 
 end

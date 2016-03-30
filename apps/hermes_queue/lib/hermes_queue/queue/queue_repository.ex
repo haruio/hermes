@@ -3,39 +3,45 @@ defmodule HQueue.QueueRepository do
 
   alias HQueue.Queue
 
+  @init_state %{
+    name_table: nil,
+    ref_map: %{}
+  }
+
   require Logger
 
   defstart start_link do
     Logger.info "[#{__MODULE__}] QueueRepository start"
-    initial_state(%{})
-  end
-
-  defstart start_link(state) do
-    Logger.info "[#{__MODULE__}] QueueRepository start by #{inspect state}"
-    initial_state(state)
-  end
-
-
-  defcall get(name), state: state do
-    reply Map.fetch(state, name)
+    initial_state(%{@init_state | name_table: :ets.new(:queue_repository, [:set, :private, :named_table])})
   end
 
   defcall declare(name), state: state do
-    case Map.fetch(state, name) do
-      {:ok, queue} -> reply {:ok, queue}
-      :error ->
-        {:ok, queue} = Queue.new(name)
-        new_state = Map.put(state, name, queue)
-        set_and_reply(new_state, {:ok, queue})
+    case :ets.lookup(state.name_table, name) do
+      [{_name, pid, _ref}] ->
+        reply {:ok, pid}
+      [] ->
+        {:ok, pid} = Queue.new(name)
+        ref = Process.monitor(pid)
+        :ets.insert(state.name_table, {name, pid, ref})
+        new_ref_map = Map.put(state.ref_map, ref, {name, pid})
+        set_and_reply(%{state | ref_map: new_ref_map}, {:ok, pid})
     end
   end
 
-  defcast set(name, queue_pid), state: state do
-    Map.put(state, name, queue_pid)
-    |> new_state
+  def handle_info({:DOWN, ref, :process, pid, _reason}, %{name_table: name_table, ref_map: ref_map}=state) do
+    # get by  ref
+    case Map.get(ref_map, ref) do
+      {name, _pid} ->
+        new_map = Map.delete(ref_map, ref)
+        :ets.delete(name_table, name)
+        Process.demonitor(ref)
+        {:noreply, %{state | ref_map: new_map}}
+      nil ->
+        {:noreply, state}
+    end
   end
 
-  defcall status, state: state do
-    reply state
+  def handle_info(msg, state) do
+    {:noreply, state}
   end
 end
