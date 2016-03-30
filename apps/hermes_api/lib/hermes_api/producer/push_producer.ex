@@ -27,12 +27,31 @@ defmodule Producer.PushProducer do
 
   ## Callback API
   def handle_cast({:publish_immediate, message}, state) do
-    state.router.publish_immediate(state.exchange, message)
-    {:noreply, state}
+    if Process.alive?(state.queue) do
+      state.router.publish_immediate(state.queue, message)
+      if :queue.is_empty(state.buffer) == false do
+        :queue.to_list(state.buffer)
+        |> Enum.each(&(state.router.publish_immediate(state.queue, &1)))
+      end
+      {:noreply, %ProducerState{state | buffer: []}}
+    else
+      {:noreply, %ProducerState{state | buffer: :queue.in(state.buffer, message)}}
+    end
   end
 
   def handle_cast({:publish_reserve, message}, state) do
     state.router.publish_reserve(message)
     {:noreply, state}
+  end
+
+  def handle_info({:DOWN, ref, :process, pid, _reason}, state) do
+    if state.queue == pid do
+      Process.demonitor(ref)
+      {:ok, queue} = state.router[:adapter].new
+      Process.monitor(queue)
+      {:noreply, %ProducerState{state | queue: queue}}
+    else
+      {:noreply, state}
+    end
   end
 end
