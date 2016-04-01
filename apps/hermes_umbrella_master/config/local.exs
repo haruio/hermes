@@ -70,8 +70,8 @@ config :hermes_push, feedback: "http://52.74.168.1:8000"
 
 # feedback url
 config :hermes_push, HPush.Feedback,
-delete: "http://localhost:8000/v1/admin/pushtoken/delete",
-update: "http://localhost:8000/v1/admin/pushtoken/update"
+delete: ["post", "http://localhost:8080/v1/admin/pushtoken/delete"],
+update: ["put", "http://localhost:8080/v1/admin/pushtoken"]
 
 config :hermes_push, HPush.Dispatcher,
 apn: HPush.Provider.APNSProvider,

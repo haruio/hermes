@@ -68,8 +68,8 @@ config :hermes_push, feedback: "http://52.74.168.1:8000"
 
 # feedback url
 config :hermes_push, HPush.Feedback,
-delete: "http://0-id-api.dingo.tv/v1/admin/pushtoken",
-update: "http://0-id-api.dingo.tv/v1/admin/pushtoken"
+delete: ["post", "http://0-id-api.dingo.tv/v1/admin/pushtoken/delete"],
+update: ["put", "http://0-id-api.dingo.tv/v1/admin/pushtoken"]
 
 
 config :hermes_push, HPush.Dispatcher,

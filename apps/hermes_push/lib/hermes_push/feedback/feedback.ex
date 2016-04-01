@@ -69,13 +69,15 @@ defmodule HPush.Feedback do
 
 
   defp send_tokens(_, []), do: :ok
-  defp send_tokens(verb, tokens) when is_atom(verb)  do
-    case @feedback_config[verb] do
-      nil -> {:error, "Invalid verb"}
-      url ->
-        Task.async(fn ->
-          HTTPoison.post!(@feedback_config[:delete], tokens |> Poison.encode!, @feedback_headers)
-        end)
+  defp send_tokens(method, tokens) when is_atom(method)  do
+    case @feedback_config[method] do
+      nil -> {:error, "Invalid mthod"}
+      ["post", url] ->
+        HTTPoison.post!(@feedback_config[method], tokens |> Poison.encode!, @feedback_headers)
+      ["put", url] ->
+        HTTPoison.put!(@feedback_config[method], tokens |> Poison.encode!, @feedback_headers)
+      [_, _] ->
+        {:error, "Invalid http method"}
     end
   end
 end
