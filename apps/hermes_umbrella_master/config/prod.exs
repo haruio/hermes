@@ -32,6 +32,7 @@ password: "apdlzjtm20!%gpfmaptm",
 database: "mks_hermes",
 port: 16603,
 hostname: "internal-dingo-db-proxy-internal-elb-1863601966.ap-southeast-1.elb.amazonaws.com",
+keepalive: true,
 pool_size: 5
 
 config :hermes_push, HPush.Repo,
@@ -41,6 +42,7 @@ password: "apdlzjtm20!%gpfmaptm",
 database: "mks_hermes",
 port: 16603,
 hostname: "internal-dingo-db-proxy-internal-elb-1863601966.ap-southeast-1.elb.amazonaws.com",
+keepalive: true,
 pool_size: 5
 
 config :hermes_scheduler, HScheduler.Repo,
@@ -50,6 +52,7 @@ password: "apdlzjtm20!%gpfmaptm",
 database: "mks_hermes",
 port: 16603,
 hostname: "internal-dingo-db-proxy-internal-elb-1863601966.ap-southeast-1.elb.amazonaws.com",
+keepalive: true,
 pool_size: 5
 
 config :hermes_api, Producer.PushProducer,
@@ -104,6 +107,7 @@ password: "apdlzjtm20!%gpfmaptm",
 database: "mks_hermes",
 port: 16603,
 hostname: "internal-dingo-db-proxy-internal-elb-1863601966.ap-southeast-1.elb.amazonaws.com",
+keepalive: true,
 pool_size: 5
 
 config :hermes_activity_receiver, Splunk,

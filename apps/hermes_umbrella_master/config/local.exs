@@ -43,6 +43,7 @@ username: "root",
 password: "foretouch919293",
 database: "mks_hermes",
 hostname: "127.0.0.1",
+keepalive: true,
 pool_size: 5
 
 config :hermes_push, HPush.Repo,
@@ -51,6 +52,7 @@ username: "root",
 password: "foretouch919293",
 database: "mks_hermes",
 hostname: "127.0.0.1",
+keepalive: true,
 pool_size: 5
 
 config :hermes_api, Producer.PushProducer,
@@ -83,6 +85,7 @@ username: "root",
 password: "foretouch919293",
 database: "mks_hermes",
 hostname: "127.0.0.1",
+keepalive: true,
 pool_size: 5
 
 config :hermes_scheduler, HScheduler.Store.PushTokenStore,

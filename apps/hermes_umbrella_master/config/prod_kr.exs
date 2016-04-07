@@ -37,6 +37,7 @@ password: "apdlzjtm20!%gpfmaptm",
 database: "mks_hermes",
 port: 16603,
 hostname: "10.10.1.5",
+keepalive: true,
 pool_size: 5
 
 config :hermes_push, HPush.Repo,
@@ -46,6 +47,7 @@ password: "apdlzjtm20!%gpfmaptm",
 database: "mks_hermes",
 port: 16603,
 hostname: "10.10.1.5",
+keepalive: true,
 pool_size: 5
 
 config :hermes_scheduler, HScheduler.Repo,
@@ -55,6 +57,7 @@ password: "apdlzjtm20!%gpfmaptm",
 database: "mks_hermes",
 port: 16603,
 hostname: "10.10.1.5",
+keepalive: true,
 pool_size: 5
 
 config :hermes_api, Producer.PushProducer,
@@ -108,6 +111,7 @@ password: "apdlzjtm20!%gpfmaptm",
 database: "mks_hermes",
 port: 16603,
 hostname: "10.10.1.5",
+keepalive: true,
 pool_size: 5
 
 config :hermes_activity_receiver, Splunk,
