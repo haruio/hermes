@@ -32,8 +32,11 @@ defmodule Producer.PushProducer do
       if :queue.is_empty(state.buffer) == false do
         :queue.to_list(state.buffer)
         |> Enum.each(&(state.router.publish_immediate(state.queue, &1)))
+
+        {:noreply, %ProducerState{state | buffer: :queue.new}}
+      else
+        {:noreply, state}
       end
-      {:noreply, %ProducerState{state | buffer: []}}
     else
       {:noreply, %ProducerState{state | buffer: :queue.in(state.buffer, message)}}
     end

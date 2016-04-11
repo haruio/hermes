@@ -73,9 +73,9 @@ defmodule HPush.Feedback do
     case @feedback_config[method] do
       nil -> {:error, "Invalid mthod"}
       ["post", url] ->
-        HTTPoison.post!(@feedback_config[method], tokens |> Poison.encode!, @feedback_headers)
+        HTTPoison.post!(url, tokens |> Poison.encode!, @feedback_headers)
       ["put", url] ->
-        HTTPoison.put!(@feedback_config[method], tokens |> Poison.encode!, @feedback_headers)
+        HTTPoison.put!(url, tokens |> Poison.encode!, @feedback_headers)
       [_, _] ->
         {:error, "Invalid http method"}
     end
