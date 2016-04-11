@@ -17,7 +17,15 @@ config :hermes_api, HApi.Endpoint,
   render_errors: [default_format: "json"]
 
 # Do not include metadata nor timestamps in development logs
-config :logger, :console, format: "[$level] $message\n"
+config :logger, :console,
+format: "[$level] $message\n",
+backends: [:console],
+handle_sasl_reports: true,
+handle_otp_reports: true,
+level: :info,
+compile_time_purge_level: :error
+
+
 
 # Set a higher stacktrace during development.
 # Do not configure such in production as keeping
