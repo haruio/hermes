@@ -48,11 +48,12 @@ defmodule HPush.Provider.APNSConnectionRepository do
     [
       env: Map.get(config, :env),
       pool_size: 5,
-      pool_max_overflow: 20,
+      pool_max_overflow: 0,
       cert: Map.get(config, :apns_cert),
       key: Map.get(config, :apns_key),
       strategy: :fifo,
-      support_old_ios: false
+      support_old_ios: false,
+      timeout: 50
     ]
   end
 end

@@ -1,4 +1,4 @@
-%{"apns": {:git, "https://github.com/syntaxfish/apns4ex", "bdf0651919af5abf9b8797bdc8b4186c7cc68188", [branch: "develop"]},
+%{"apns": {:git, "https://github.com/syntaxfish/apns4ex", "9e7a6b966aa0a1a73d61171bd14ec5b473428994", [branch: "develop"]},
   "bbmustache": {:hex, :bbmustache, "1.0.4"},
   "calendar": {:hex, :calendar, "0.13.2"},
   "certifi": {:hex, :certifi, "0.4.0"},
