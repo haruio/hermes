@@ -45,7 +45,7 @@ password: "foretouch919293",
 database: "mks_hermes",
 hostname: "127.0.0.1",
 keepalive: true,
-pool_size: 5
+pool_size: 2
 
 config :hermes_push, HPush.Repo,
 adapter: Ecto.Adapters.MySQL,
@@ -54,7 +54,7 @@ password: "foretouch919293",
 database: "mks_hermes",
 hostname: "127.0.0.1",
 keepalive: true,
-pool_size: 5
+pool_size: 2
 
 config :hermes_api, Producer.PushProducer,
 adapter: Producer.Router.LocalPushRouter
@@ -87,7 +87,7 @@ password: "foretouch919293",
 database: "mks_hermes",
 hostname: "127.0.0.1",
 keepalive: true,
-pool_size: 5
+pool_size: 2
 
 config :hermes_scheduler, HScheduler.Store.PushTokenStore,
 adapter: HScheduler.Store.ETSAdapter,

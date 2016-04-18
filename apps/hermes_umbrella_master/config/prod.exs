@@ -41,7 +41,7 @@ database: "mks_hermes",
 port: 16603,
 hostname: "internal-dingo-db-proxy-internal-elb-1863601966.ap-southeast-1.elb.amazonaws.com",
 keepalive: true,
-pool_size: 5
+pool_size: 2
 
 config :hermes_push, HPush.Repo,
 adapter: Ecto.Adapters.MySQL,
@@ -51,7 +51,7 @@ database: "mks_hermes",
 port: 16603,
 hostname: "internal-dingo-db-proxy-internal-elb-1863601966.ap-southeast-1.elb.amazonaws.com",
 keepalive: true,
-pool_size: 5
+pool_size: 2
 
 config :hermes_scheduler, HScheduler.Repo,
 adapter: Ecto.Adapters.MySQL,
@@ -61,7 +61,7 @@ database: "mks_hermes",
 port: 16603,
 hostname: "internal-dingo-db-proxy-internal-elb-1863601966.ap-southeast-1.elb.amazonaws.com",
 keepalive: true,
-pool_size: 5
+pool_size: 2
 
 config :hermes_api, Producer.PushProducer,
 adapter: Producer.Router.LocalPushRouter
