@@ -18,11 +18,7 @@ defmodule HPush.Mixfile do
      mod: {HPush, []}]
   end
 
-  def env_applications(:test), do: [:hermes_queue]
-  def env_applications(:local), do: [:hermes_queue]
-  def env_applications(:prod_kr), do: [:hermes_queue]
-  def env_applications(:prod), do: [:hermes_queue]
-  def env_applications(_), do: []
+  def env_applications(_), do: [:hermes_queue]
 
   defp deps do
     [
@@ -39,7 +35,7 @@ defmodule HPush.Mixfile do
       {:conform, "~> 2.0"},
       {:conform_exrm, "~> 1.0"},
       {:calendar, "~> 0.13.2"},
-      {:hermes_queue, in_umbrella: true, only: [:local, :test, :prod_kr, :prod]}
+      {:hermes_queue, in_umbrella: true}
     ]
   end
 end

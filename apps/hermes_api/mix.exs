@@ -27,11 +27,7 @@ defmodule HApi.Mixfile do
     ]
   end
 
-  def env_applications(:test), do: [:hermes_queue]
-  def env_applications(:prod_kr), do: [:hermes_queue]
-  def env_applications(:prod), do: [:hermes_queue]
-  def env_applications(:local), do: [:hermes_queue]
-  def env_applications(_), do: []
+  def env_applications(_), do: [:hermes_queue]
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "web", "test/support"]
@@ -53,7 +49,7 @@ defmodule HApi.Mixfile do
      {:conform, "~> 2.0"},
      {:conform_exrm, "~> 1.0"},
      {:calendar, "~> 0.13.2"},
-     {:hermes_queue, in_umbrella: true, only: [:local, :test, :prod_kr, :prod]},
+     {:hermes_queue, in_umbrella: true},
      {:scrivener, "~> 1.1"},
      {:cowboy, "~> 1.0"}]
   end
