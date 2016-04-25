@@ -28,7 +28,9 @@ defmodule HPush.Provider.APNSProvider do
     tokens
     |> Enum.with_index
     |> Enum.each(fn({token, i}) ->
-      APNS.push(pool_name, Map.put(payload, :token, token))
+      # APNS.push(pool_name, Map.put(payload, :token, token))
+      {:ok, queue} = HQueue.Queue.declare(pool_name)
+      HQueue.Queue.publish(queue, Map.put(payload, :token, token))
     end)
 
     ## TODO send feedback
@@ -56,6 +58,6 @@ defmodule HPush.Provider.APNSProvider do
     Map.drop(extra, ["android", "ios"])
     |> Map.merge(Map.get(extra, "ios", %{}))
     |> Map.put("pushId", Map.get(message, :push_id))
-    |> Map.put("feedback", feedback)
+    # |> Map.put("feedback", feedback)
   end
 end

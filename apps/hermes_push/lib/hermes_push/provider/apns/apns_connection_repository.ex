@@ -1,14 +1,26 @@
 defmodule HPush.Provider.APNSConnectionRepository do
-  use ExActor.GenServer, export: __MODULE__
+  use GenServer
 
-  require Logger
+  defmodule State do
+    defstruct conn_map: %{}
+  end
 
-  defstart start_link(args \\ %{}), do: initial_state(args)
+  def start_link(args \\ %{}) do
+    GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
+  end
 
-  @default_apns_env :dev
+  def init(_args) do
+    {:ok, %State{}}
+  end
 
-  defcall get_repository(message), state: state do
-    Logger.debug "[#{__MODULE__}] handle_call get_repository"
+  ## Public API
+  def get_repository(message) do
+    GenServer.call(__MODULE__, {:get_repository, message})
+  end
+
+
+  ## Callback API
+  def handle_call({:get_repository, message}, _from, %State{conn_map: conn_map}=state) do
     env = case message[:options][:apns]["env"] do
             "prod" -> :prod
             "dev" -> :dev
@@ -16,44 +28,47 @@ defmodule HPush.Provider.APNSConnectionRepository do
           end
     p_name = pool_name(message[:service_id], env)
 
-    case Map.get(state, p_name, nil) do
+    case Map.get(conn_map, p_name, nil) do
       nil ->
         pool  = message
         |> Map.take([:apns_cert, :apns_key, :service_id, :push_id])
         |> Map.put(:env, env)
         |> create_new_pool
 
-        new_state = Map.put(state, p_name, pool)
-        set_and_reply(new_state, {:ok, p_name})
-     pool ->
-        reply({:ok, pool[:name]})
+        {:reply, {:ok, p_name}, %State{state | conn_map: Map.put(conn_map, p_name, pool)}}
+      pool ->
+        {:reply, {:ok, pool[:name]}, state}
     end
+
   end
 
+  ## Private API
   defp create_new_pool(%{service_id: service_id, apns_cert: apns_cert, apns_key: apns_key, env: env, push_id: push_id} = config) do
+    p_name = pool_name(service_id, env)
+    {:ok, queue} = HQueue.Queue.declare(p_name)
+    {:ok, pool_man} = HPush.Provider.APNSConnectionPoolMan.start_link(p_name)
     pool = %{
-      name: pool_name(service_id, env),
+      name: p_name,
       config: pool_config(config),
+      queue: queue,
       time: Calendar.DateTime.now_utc
     }
     APNS.connect_pool(pool[:name], pool[:config])
-    Logger.debug "[#{__MODULE__}] create new pool: #{inspect Map.take(pool, [:name, :time])}"
 
     pool
   end
 
-
-  def pool_name(service_id, env), do: Atom.to_string(env) <> "::" <> service_id
-  def pool_config(config) do
+  defp pool_name(service_id, env), do: Atom.to_string(env) <> "::" <> service_id
+  defp pool_config(config) do
     [
       env: Map.get(config, :env),
-      pool_size: 5,
+      pool_size: 50,
       pool_max_overflow: 0,
       cert: Map.get(config, :apns_cert),
       key: Map.get(config, :apns_key),
       strategy: :fifo,
       support_old_ios: false,
-      timeout: 50
+      timeout: 120 # sec
     ]
   end
 end
