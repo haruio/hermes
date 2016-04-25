@@ -12,14 +12,17 @@ defmodule HQueue.QueueRepository do
 
   defstart start_link do
     Logger.info "[#{__MODULE__}] QueueRepository start"
+    Process.flag(:trap_exit, true)
     initial_state(%{@init_state | name_table: :ets.new(:queue_repository, [:set, :private, :named_table])})
   end
 
   defcall declare(name), state: state do
     case :ets.lookup(state.name_table, name) do
       [{_name, pid, _ref}] ->
+        Logger.debug "[#{__MODULE__}] Get Queue: #{name}"
         reply {:ok, pid}
       [] ->
+        Logger.debug "[#{__MODULE__}] Create Queue: #{name}"
         {:ok, pid} = Queue.new(name)
         ref = Process.monitor(pid)
         :ets.insert(state.name_table, {name, pid, ref})
