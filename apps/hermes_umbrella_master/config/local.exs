@@ -29,7 +29,7 @@ config :hermes_api, HApi.Endpoint,
 # Do not include metadata nor timestamps in development logs
   config :logger, :console,
   format: "[$level] $message\n",
-  level: :info,
+  level: :debug,
   compile_time_purge_level: :error
 
 # Set a higher stacktrace during development.

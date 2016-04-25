@@ -22,7 +22,7 @@ config :logger, :console,
   backends: [:console],
   handle_sasl_reports: true,
   handle_otp_reports: true,
-  level: :info,
+  level: :error,
   compile_time_purge_level: :error
 
 # Set a higher stacktrace during development.

@@ -22,7 +22,7 @@ format: "[$level] $message\n",
 backends: [:console],
 handle_sasl_reports: true,
 handle_otp_reports: true,
-level: :info,
+level: :error,
 compile_time_purge_level: :error
 
 
