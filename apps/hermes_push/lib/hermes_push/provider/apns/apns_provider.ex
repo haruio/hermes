@@ -24,11 +24,9 @@ defmodule HPush.Provider.APNSProvider do
 
     payload = build_payload(message)
     Logger.debug "[#{__MODULE__}] handle_cast  publish APNS.push"
-    # Enum.each(tokens, &(APNS.push(pool_name, Map.put(payload, :token, &1))))
     tokens
     |> Enum.with_index
     |> Enum.each(fn({token, i}) ->
-      # APNS.push(pool_name, Map.put(payload, :token, token))
       {:ok, queue} = HQueue.Queue.declare(pool_name)
       HQueue.Queue.publish(queue, Map.put(payload, :token, token))
     end)
@@ -58,6 +56,6 @@ defmodule HPush.Provider.APNSProvider do
     Map.drop(extra, ["android", "ios"])
     |> Map.merge(Map.get(extra, "ios", %{}))
     |> Map.put("pushId", Map.get(message, :push_id))
-    # |> Map.put("feedback", feedback)
+    |> Map.put("feedback", feedback)
   end
 end

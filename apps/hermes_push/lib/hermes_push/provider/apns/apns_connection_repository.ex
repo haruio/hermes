@@ -1,6 +1,8 @@
 defmodule HPush.Provider.APNSConnectionRepository do
   use GenServer
 
+  @default_apns_env :dev
+
   defmodule State do
     defstruct conn_map: %{}
   end
