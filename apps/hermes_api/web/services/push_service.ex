@@ -338,7 +338,7 @@ defmodule HApi.PushService do
       "pushStatus" => model.push_status,
       "publishStartDt" => model.publish_start_dt |> ecto_datetime_to_timestamp,
       "publishEndDt" => model.publish_end_dt |> ecto_datetime_to_timestamp,
-      "publishTime" => model.publish_end_dt |> ecto_datetime_to_timestamp,
+      "publishTime" => model.publish_dt |> ecto_datetime_to_timestamp,
       "pushStats" => %{get_stats_summary(model.push_id) | "requested" => model.request_cnt}
     }
   end
