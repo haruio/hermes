@@ -9,17 +9,37 @@ defmodule HApi.Router do
   scope "/api", HApi do
     pipe_through :api
 
-    ## push
-    post "/push", PushController, :send_push
-    post "/push/message", PushController, :create_message
-    post "/push/token", PushController, :send_token
+    scope "/push" do
+      post "/", PushController, :send_push
+      post "/message", PushController, :create_message
+      post "/token", PushController, :send_token
 
-    get  "/push", PushController, :get_push_list
-    get  "/push/:id", PushController, :get_push
+      get  "/", PushController, :get_push_list
+      get  "/:id", PushController, :get_push
 
-    ## push reserved
-    post "/push/reserved/immediate/:id", PushController, :send_immediate_reserved
-    delete "/push/reserved/:id", PushController, :cancel_reserved
-    put "/push/reserved/:id", PushController, :update_reserved
+      ## push reserved
+      post "/reserved/immediate/:id", PushController, :send_immediate_reserved
+      delete "/reserved/:id", PushController, :cancel_reserved
+      put "/reserved/:id", PushController, :update_reserved
+    end
+
+    scope "/services" do
+
+    end
+
+    scope "/mail" do
+      post "/", MailController, :send_mail
+      delete "/:mail_id", MailController, :cancel_mail
+      get "/", MailController, :get_mail_list
+      get "/:mail_id", MailController, :get_mail
+
+      scope "/template" do
+        post "/", MailTemplateController, :create_template
+        get "/", MailTemplateController, :get_template_list
+        get "/:template_seq", MailTemplateController, :get_template
+        put "/:template_seq", MailTemplateController, :update_template
+        delete "/:template_seq", MailTemplateController, :delete_template
+      end
+    end
   end
 end

@@ -43,7 +43,8 @@ defmodule HScheduler.Mixfile do
       {:quantum, "~> 1.6"},
       {:scrivener, "~> 1.1"},
       {:ecto, "~> 1.0"},
-      {:mariaex, "~> 0.6.2"},
+      # {:mariaex, "~> 0.6.2"},
+      {:mariaex, git: "https://github.com/syntaxfish/mariaex", branch: "master", override: true},
       {:exactor, "~> 2.2"},
       {:poolboy, "~> 1.5"},
       {:hermes_queue, in_umbrella: true},
@@ -51,6 +52,5 @@ defmodule HScheduler.Mixfile do
       {:conform, "~> 2.0"},
       {:conform_exrm, "~> 1.0"}
     ]
-
   end
 end

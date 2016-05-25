@@ -4,8 +4,8 @@ defmodule HApi.Mixfile do
   def project do
     [app: :hermes_api,
      version: "0.0.1",
-     deps_path: "../../deps",
-     lockfile: "../../mix.lock",
+     deps_path: "./deps",
+     lockfile: "./mix.lock",
      elixir: "~> 1.0",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
@@ -22,7 +22,7 @@ defmodule HApi.Mixfile do
     [
       mod: {HApi, []},
       applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext,
-                     :phoenix_ecto, :mariaex, :calendar,
+                     :phoenix_ecto, :mariaex, :calendar, :proper_case,
                      :exactor, :timex] ++ env_applications(Mix.env)
     ]
   end
@@ -39,7 +39,8 @@ defmodule HApi.Mixfile do
   defp deps do
     [{:phoenix, "~> 1.1.0"},
      {:phoenix_ecto, "~> 2.0"},
-     {:mariaex, ">= 0.0.0"},
+     # {:mariaex, ">= 0.0.0"},
+     {:mariaex, git: "https://github.com/syntaxfish/mariaex", branch: "master", override: true},
      {:phoenix_html, "~> 2.3"},
      {:phoenix_live_reload, "~> 1.0", only: [:local]},
      {:gettext, "~> 0.9"},
@@ -51,7 +52,9 @@ defmodule HApi.Mixfile do
      {:calendar, "~> 0.13.2"},
      {:hermes_queue, in_umbrella: true},
      {:scrivener, "~> 1.1"},
-     {:cowboy, "~> 1.0"}]
+     {:cowboy, "~> 1.0"},
+     {:proper_case, "~> 0.1.1"}
+    ]
   end
 
   # Aliases are shortcut or tasks specific to the current project.

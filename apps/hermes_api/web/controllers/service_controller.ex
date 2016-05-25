@@ -3,6 +3,4 @@ defmodule HApi.ServiceController do
 
   alias HApi.Service
 
-  plug :scrub_params, "service" when action in [:create, :update]
-
  end
