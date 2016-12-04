@@ -1,5 +1,9 @@
 # Hermes
+```
+./build_umbrella.sh
 
+./start_umbrella.sh
+```
 **TODO: Add description**
 
 ## Installation
